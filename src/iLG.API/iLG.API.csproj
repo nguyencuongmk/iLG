@@ -15,8 +15,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
     <Folder Include="Models\Requests\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\iLG.Infrastructure\iLG.Infrastructure.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iLG.API", "iLG.API\iLG.API.csproj", "{42FD2686-9C20-4D5B-A1DA-4FC8A3878D66}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iLG.API", "iLG.API\iLG.API.csproj", "{42FD2686-9C20-4D5B-A1DA-4FC8A3878D66}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iLG.Domain", "iLG.Domain\iLG.Domain.csproj", "{C5029022-775C-4023-8388-5DF003B94CD3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iLG.Infrastructure", "iLG.Infrastructure\iLG.Infrastructure.csproj", "{08463640-CC14-4DA7-B08D-622BD3B19D9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +19,14 @@ Global
 		{42FD2686-9C20-4D5B-A1DA-4FC8A3878D66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{42FD2686-9C20-4D5B-A1DA-4FC8A3878D66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{42FD2686-9C20-4D5B-A1DA-4FC8A3878D66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5029022-775C-4023-8388-5DF003B94CD3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5029022-775C-4023-8388-5DF003B94CD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5029022-775C-4023-8388-5DF003B94CD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5029022-775C-4023-8388-5DF003B94CD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08463640-CC14-4DA7-B08D-622BD3B19D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08463640-CC14-4DA7-B08D-622BD3B19D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08463640-CC14-4DA7-B08D-622BD3B19D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08463640-CC14-4DA7-B08D-622BD3B19D9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
