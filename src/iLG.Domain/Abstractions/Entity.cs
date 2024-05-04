@@ -15,7 +15,7 @@ namespace iLG.Domain.Abstractions
 
         public string? UpdatedBy { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 
     public abstract class Entity : IEntity
@@ -30,6 +30,6 @@ namespace iLG.Domain.Abstractions
 
         public string? UpdatedBy { get; set; }
 
-        public bool IsDeleted { get; set; }
+        public bool IsDeleted { get; set; } = false;
     }
 }

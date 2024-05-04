@@ -1,0 +1,26 @@
+version: '3.4'
+
+services:
+  ilgdb:
+    container_name: ilgdb
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=iLGCNS24!
+    restart: always
+    ports:
+      - "1433:1433" 
+
+  ilg.api:
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_HTTP_PORTS=8080
+      - ASPNETCORE_HTTPS_PORTS=8081
+      - ConnectionStrings__Database=Server=localhost;Database=ilgdb;User Id=sa;Password=iLGCNS24!;Encrypt=false;TrustServerCertificate=True
+    ports:
+      - "6080:8080"
+      - "6081:8081"
+    depends_on:
+      - ilgdb
+    volumes:
+      - ${APPDATA}/Microsoft/UserSecrets:/home/app/.microsoft/usersecrets:ro
+      - ${APPDATA}/ASP.NET/Https:/home/app/.aspnet/https:ro

@@ -10,8 +10,6 @@ FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["iLG.API/iLG.API.csproj", "iLG.API/"]
-COPY ["iLG.Infrastructure/iLG.Infrastructure.csproj", "iLG.Infrastructure/"]
-COPY ["iLG.Domain/iLG.Domain.csproj", "iLG.Domain/"]
 RUN dotnet restore "./iLG.API/iLG.API.csproj"
 COPY . .
 WORKDIR "/src/iLG.API"

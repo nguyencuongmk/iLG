@@ -7,7 +7,7 @@ namespace iLG.Infrastructure.Extentions
 {
     public static class DatabaseExtentions
     {
-        public static async Task InitialiseDatabaseAsync(this WebApplication app)
+        public static async Task InitializeDatabaseAsync(this WebApplication app)
         {
             using var scope = app.Services.CreateScope();
             var context = scope.ServiceProvider.GetRequiredService<ILGDbContext>();
@@ -18,6 +18,8 @@ namespace iLG.Infrastructure.Extentions
         private static async Task SeedAsync(ILGDbContext context)
         {
             await SeedRoleAsync(context);
+            await SeedUserAsync(context);
+            await SeedUserRoleAsync(context);
         }
 
         private static async Task SeedRoleAsync(ILGDbContext context)
@@ -25,6 +27,24 @@ namespace iLG.Infrastructure.Extentions
             if (!await context.Roles.AnyAsync())
             {
                 await context.Roles.AddRangeAsync(InitialData.Roles);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedUserAsync(ILGDbContext context)
+        {
+            if (!await context.Users.AnyAsync())
+            {
+                await context.Users.AddRangeAsync(InitialData.Users);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedUserRoleAsync(ILGDbContext context)
+        {
+            if (!await context.UserRoles.AnyAsync())
+            {
+                await context.UserRoles.AddRangeAsync(InitialData.UserRoles);
                 await context.SaveChangesAsync();
             }
         }

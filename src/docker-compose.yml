@@ -1,0 +1,11 @@
+version: '3.4'
+
+services:
+  ilgdb:
+    image: mcr.microsoft.com/mssql/server
+
+  ilg.api:
+    image: ${DOCKER_REGISTRY-}ilgapi
+    build:
+      context: .
+      dockerfile: iLG.API/Dockerfile
