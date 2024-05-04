@@ -27,6 +27,8 @@ namespace iLG.Infrastructure.Data
 
         public DbSet<UserInfo> UserInfos => Set<UserInfo>();
 
+        public DbSet<UserInfoHobby> UserInfoHobbies => Set<UserInfoHobby>();
+
         public DbSet<UserMatch> UserMatches => Set<UserMatch>();
 
         public DbSet<UserRole> UserRoles => Set<UserRole>();

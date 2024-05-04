@@ -17,6 +17,8 @@ namespace iLG.Domain.Entities
 
         public string? RelationshipStatus { get; set; }
 
+        public Zodiac? Zodiac { get; set; }
+
         public string? Biography { get; set; }
 
         public int UserId { get; set; }

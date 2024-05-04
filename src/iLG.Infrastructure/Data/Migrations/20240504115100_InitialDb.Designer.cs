@@ -12,7 +12,7 @@ using iLG.Infrastructure.Data;
 namespace iLG.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ILGDbContext))]
-    [Migration("20240504090644_InitialDb")]
+    [Migration("20240504115100_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -327,8 +327,9 @@ namespace iLG.Infrastructure.Data.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("Gender")
-                        .HasColumnType("int");
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
@@ -350,6 +351,9 @@ namespace iLG.Infrastructure.Data.Migrations
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Zodiac")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
