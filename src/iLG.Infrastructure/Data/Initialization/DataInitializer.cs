@@ -1,11 +1,10 @@
-﻿using iLG.Infrastructure.Data;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace iLG.Infrastructure.Extentions
+namespace iLG.Infrastructure.Data.Initialization
 {
-    public static class WebApplicationExtentions
+    public static class DataInitializer
     {
         public static async Task InitializeDatabaseAsync(this WebApplication app)
         {

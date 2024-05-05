@@ -1,4 +1,5 @@
 ﻿using iLG.API.Models.Responses;
+using Microsoft.AspNetCore.WebUtilities;
 
 namespace iLG.API.Extensions
 {
@@ -13,12 +14,12 @@ namespace iLG.API.Extensions
             }
             else
             {
-                if (response.Data is ICollection<dynamic>)
-                    response.Result.TotalRecords = response.Data is ICollection<dynamic> data ? data.Count : 0;
+                if (response.Data.GetType().GetGenericTypeDefinition().IsGenericTypeDefinition)
+                    response.Result.TotalRecords = response.Data.Count;
                 else
                 {
                     var data = response.Data;
-                    response.Data = new List<dynamic>() { data };
+                    response.Data = data is null ? [] : new List<dynamic>() { data };
                     response.Result.TotalRecords = response.Data.Count;
                 }
 
@@ -26,7 +27,7 @@ namespace iLG.API.Extensions
             }
 
             response.Result.StatusCode = statusCode;
-            response.Result.Message = message;
+            response.Result.Message = string.IsNullOrEmpty(message) ? ReasonPhrases.GetReasonPhrase(statusCode) : message;
 
             return response;
         }

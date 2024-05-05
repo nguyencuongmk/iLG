@@ -6,7 +6,7 @@ namespace iLG.Domain.Entities
     {
         public int UserInfoId { get; set; }
 
-        public UserInfo UserInfo { get; set; }
+        public virtual UserInfo UserInfo { get; set; }
 
         public int UserMatchedId { get; set; }
     }

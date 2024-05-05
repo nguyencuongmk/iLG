@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace iLG.Infrastructure.Helper
+namespace iLG.Infrastructure.Helpers
 {
     public static class PasswordHasher
     {

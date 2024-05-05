@@ -8,8 +8,8 @@ namespace iLG.Domain.Entities
 
         public int HobbyId { get; set; }
 
-        public UserInfo UserInfo { get; set; }
+        public virtual UserInfo UserInfo { get; set; }
 
-        public Hobby Hobby { get; set; }
+        public virtual Hobby Hobby { get; set; }
     }
 }

@@ -12,7 +12,7 @@ namespace iLG.Domain.Entities
 
         public bool IsLocked { get; set; } = false;
 
-        public UserInfo UserInfo { get; set; }
+        public virtual UserInfo UserInfo { get; set; }
 
         public virtual List<Role> Roles { get; set; } = [];
     }

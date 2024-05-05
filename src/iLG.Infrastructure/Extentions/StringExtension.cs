@@ -1,6 +1,4 @@
-﻿using iLG.Domain.Enums;
-
-namespace iLG.Infrastructure.Extentions
+﻿namespace iLG.Infrastructure.Extentions
 {
     public static class StringExtension
     {

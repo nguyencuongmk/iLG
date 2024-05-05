@@ -1,8 +1,8 @@
 ﻿using iLG.Domain.Entities;
 using iLG.Domain.Enums;
-using iLG.Infrastructure.Helper;
+using iLG.Infrastructure.Helpers;
 
-namespace iLG.Infrastructure.Data
+namespace iLG.Infrastructure.Data.Initialization
 {
     public class InitialData
     {

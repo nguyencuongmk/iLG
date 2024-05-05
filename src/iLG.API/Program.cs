@@ -1,8 +1,6 @@
-using iLG.API.Handlers;
 using iLG.API.IoC;
-using iLG.API.Middleware;
+using iLG.Infrastructure.Data.Initialization;
 using iLG.Infrastructure.IoC;
-using iLG.Infrastructure.Extentions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,12 +8,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructureServices(builder.Configuration)
                 .AddApiServices();
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddExceptionHandler<ExceptionHandler>();
 
 var app = builder.Build();
 
@@ -29,11 +21,5 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     await app.InitializeDatabaseAsync();
 }
-
-app.UseHttpsRedirection();
-app.UseAuthorization();
-app.MapControllers();
-app.UseMiddleware<LoggingMiddleware>();
-app.UseExceptionHandler(options => { });
 
 app.Run();
