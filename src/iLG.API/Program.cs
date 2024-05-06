@@ -1,11 +1,14 @@
-﻿using iLG.API.Helpers;
-using iLG.API.IoC;
+﻿using iLG.API.IoC;
 using iLG.API.Settings;
 using iLG.Infrastructure.Data.Initialization;
 using iLG.Infrastructure.IoC;
-using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+
+builder.Services.AddInfrastructureServices(builder.Configuration)
+                .AddApiServices(builder.Configuration);
 
 // Config appsettings.json
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
@@ -16,19 +19,10 @@ builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
 // Config AppSettings
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
-// Add services to the container.
-
-builder.Services.AddInfrastructureServices(builder.Configuration)
-                .AddApiServices(builder.Configuration);
-
 var app = builder.Build();
-
-// Khởi tạo JwtHelper với phụ thuộc từ DI Container
-JwtHelper.Initialize(app.Services.GetRequiredService<IOptions<AppSettings>>());
 
 // Configure the HTTP request pipeline.
 
-app.UseApiServices();
 
 if (app.Environment.IsDevelopment())
 {
@@ -52,5 +46,7 @@ if (app.Environment.IsDevelopment())
     });
     await app.InitializeDatabaseAsync();
 }
+
+app.UseApiServices();
 
 app.Run();

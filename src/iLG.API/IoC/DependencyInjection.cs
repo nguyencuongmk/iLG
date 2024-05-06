@@ -1,8 +1,12 @@
 ﻿using iLG.API.Handlers;
+using iLG.API.Helpers;
 using iLG.API.Maps;
 using iLG.API.Middleware;
+using iLG.API.Services;
+using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -26,7 +30,7 @@ namespace iLG.API.IoC
                     Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
-                    Type = SecuritySchemeType.ApiKey,
+                    Type = SecuritySchemeType.Http,
                     BearerFormat = "JWT",
                     Scheme = "Bearer"
                 });
@@ -34,8 +38,18 @@ namespace iLG.API.IoC
                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
-                        new OpenApiSecurityScheme { Reference = new OpenApiReference { Type = ReferenceType.SecurityScheme, Id = "Bearer" } },
-                        Array.Empty<string>()
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "Bearer",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header
+                        },
+                        new List<string>()
                     }
                 });
             });
@@ -64,6 +78,9 @@ namespace iLG.API.IoC
             // Config Auto Mapper
             services.AddAutoMapper(typeof(Mapper));
 
+            // Config Services
+            services.AddTransient<IUserService, UserService>();
+
             // Config Exception Handler
             services.AddExceptionHandler<ExceptionHandler>();
 
@@ -75,10 +92,13 @@ namespace iLG.API.IoC
 
         public static WebApplication UseApiServices(this WebApplication app)
         {
+            // Initialize JwtHelper with dependency from DI Container
+            JwtHelper.Initialize(app.Services.GetRequiredService<IOptions<AppSettings>>());
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 

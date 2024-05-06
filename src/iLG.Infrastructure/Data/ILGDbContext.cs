@@ -33,6 +33,8 @@ namespace iLG.Infrastructure.Data
 
         public DbSet<UserRole> UserRoles => Set<UserRole>();
 
+        public DbSet<UserToken> UserTokens => Set<UserToken>();
+
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

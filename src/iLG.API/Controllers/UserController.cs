@@ -1,10 +1,8 @@
 ﻿using iLG.API.Extensions;
 using iLG.API.Helpers;
 using iLG.API.Models.Responses;
-using iLG.API.Settings;
 using iLG.Infrastructure.Repositories.Abstractions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
