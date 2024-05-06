@@ -5,7 +5,7 @@ namespace iLG.API.Extensions
 {
     public static class ApiResponseExtension
     {
-        public static ApiResponse GetResult(this ApiResponse response, int statusCode, string message)
+        public static ApiResponse GetResult(this ApiResponse response, int statusCode, string message = "")
         {
             if (statusCode != StatusCodes.Status200OK)
             {
@@ -14,8 +14,11 @@ namespace iLG.API.Extensions
             }
             else
             {
-                if (response.Data.GetType().GetGenericTypeDefinition().IsGenericTypeDefinition)
-                    response.Result.TotalRecords = response.Data.Count;
+                if (response.Data.GetType().IsGenericType)
+                {
+                    if (response.Data.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))
+                        response.Result.TotalRecords = response.Data.Count;
+                }
                 else
                 {
                     var data = response.Data;

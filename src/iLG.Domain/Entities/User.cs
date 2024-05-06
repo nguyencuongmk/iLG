@@ -15,5 +15,7 @@ namespace iLG.Domain.Entities
         public virtual UserInfo UserInfo { get; set; }
 
         public virtual List<Role> Roles { get; set; } = [];
+
+        public virtual List<UserToken> UserTokens { get; set; } = [];
     }
 }

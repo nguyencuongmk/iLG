@@ -13,8 +13,9 @@ namespace iLG.Infrastructure.IoC
         {
             var connectionString = configuration.GetConnectionString("Database");
             services.AddDbContext<ILGDbContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connectionString));
-
+            
             services.AddScoped<IHobbyRepository, HobbyRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
             return services;
         }
     }
