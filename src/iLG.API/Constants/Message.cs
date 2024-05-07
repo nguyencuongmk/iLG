@@ -15,6 +15,7 @@
                 public const string LOGIN_FAILED = "Email or Password is invalid";
                 public const string ACCOUNT_LOCKED = "Account is locked";
                 public const string EMAIL_NOT_YET_CONFIRMED = "Account has not been confirmed by email";
+                public const string INVALID_TOKEN = "Invalid Token";
             }
         }
     }

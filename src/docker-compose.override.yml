@@ -4,6 +4,7 @@ services:
   ilgdb:
     container_name: ilgdb
     environment:
+      - TZ=Asia/Ho_Chi_Minh
       - ACCEPT_EULA=Y
       - SA_PASSWORD=iLGCNS24!
     restart: always

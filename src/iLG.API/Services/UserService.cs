@@ -63,7 +63,7 @@ namespace iLG.API.Services
 
             var userTokens = await _userTokenRepository.GetListAsync
             (
-                expression: ut => ut.UserId == user.Id && ut.ExpiredTime < DateTime.Now && !ut.IsDeleted,
+                expression: ut => ut.UserId == user.Id && ut.ExpiredTime > DateTime.Now && !ut.IsDeleted,
                 orderBy: o => o.OrderByDescending(ut => ut.ExpiredTime)
             );
 
@@ -91,7 +91,8 @@ namespace iLG.API.Services
                     Token = accessToken.Item1,
                     ExpiredTime = accessToken.Item2, 
                     Platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform),
-                    MachineName = Environment.MachineName
+                    MachineName = Environment.MachineName,
+                    CreatedBy = "system"
                 });
 
                 await _userRepository.UpdateAsync(user);
@@ -135,7 +136,7 @@ namespace iLG.API.Services
 
             var isValidToken = await _userTokenRepository.IsExistAsync
             (
-                expression: ut => ut.Token == token && ut.UserId == user.Id && ut.ExpiredTime < DateTime.UtcNow && !ut.IsDeleted
+                expression: ut => ut.Token == token && ut.UserId == user.Id && ut.ExpiredTime > DateTime.UtcNow && !ut.IsDeleted
             );
 
             return isValidToken;

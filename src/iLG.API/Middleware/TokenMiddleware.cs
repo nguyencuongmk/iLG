@@ -1,4 +1,5 @@
-﻿using iLG.API.Extensions;
+﻿using iLG.API.Constants;
+using iLG.API.Extensions;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
@@ -36,7 +37,7 @@ namespace iLG.API.Middleware
                     var response = new ApiResponse();
                     response.Errors.Add(new Error()
                     {
-                        ErrorMessage = "Invalid Token"
+                        ErrorMessage = Message.Error.User.INVALID_TOKEN
                     });
 
                     var result = response.GetResult(401);
@@ -55,7 +56,7 @@ namespace iLG.API.Middleware
                         var response = new ApiResponse();
                         response.Errors.Add(new Error()
                         {
-                            ErrorMessage = "Invalid Token"
+                            ErrorMessage = Message.Error.User.INVALID_TOKEN
                         });
 
                         var result = response.GetResult(401);
