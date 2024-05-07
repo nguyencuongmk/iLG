@@ -16,6 +16,7 @@ namespace iLG.Infrastructure.IoC
             
             services.AddScoped<IHobbyRepository, HobbyRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserTokenRepository, UserTokenRepository>();
             return services;
         }
     }

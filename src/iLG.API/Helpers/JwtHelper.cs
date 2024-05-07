@@ -16,7 +16,7 @@ namespace iLG.API.Helpers
             _appSettings = options.Value;
         }
 
-        public static (string, DateTime) GenerateAccessToken(string email, int userId, IEnumerable<string> roles)
+        public static (string, DateTime) GenerateAccessToken(string email, int userId, List<string?> roles)
         {
             try
             {

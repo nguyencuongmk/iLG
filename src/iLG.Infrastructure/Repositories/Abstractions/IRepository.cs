@@ -18,10 +18,10 @@ namespace iLG.Infrastructure.Repositories.Abstractions
             Func<IQueryable<TEntity>, IIncludableQueryable<TEntity, object>> includes = null
             );
 
-        Task Update(TEntity entity);
+        Task UpdateAsync(TEntity entity);
 
-        Task Delete(TEntity entity);
+        Task DeleteAsync(TEntity entity);
 
-        Task<bool> IsExist(Expression<Func<TEntity, bool>> expression);
+        Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> expression);
     }
 }

@@ -64,19 +64,19 @@ namespace iLG.Infrastructure.Repositories
             return await query.FirstOrDefaultAsync(expression);
         }
 
-        public async Task Update(TEntity entity)
+        public async Task UpdateAsync(TEntity entity)
         {
             _dbSet.Update(entity);
             await _context.SaveChangesAsync();
         }
 
-        public async Task Delete(TEntity entity)
+        public async Task DeleteAsync(TEntity entity)
         {
             entity.IsDeleted = true;
             await _context.SaveChangesAsync();
         }
 
-        public async Task<bool> IsExist(Expression<Func<TEntity, bool>> expression)
+        public async Task<bool> IsExistAsync(Expression<Func<TEntity, bool>> expression)
         {
             IQueryable<TEntity> query = _dbSet;
             return await query.AnyAsync(expression);

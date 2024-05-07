@@ -1,9 +1,10 @@
-﻿using iLG.API.Extensions;
+﻿using iLG.API.Constants;
+using iLG.API.Extensions;
 using iLG.API.Helpers;
+using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
-using iLG.Infrastructure.Repositories.Abstractions;
+using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iLG.API.Controllers
@@ -12,11 +13,11 @@ namespace iLG.API.Controllers
     [ApiController]
     public class UserController : ControllerBase
     {
-        private readonly IUserRepository _userRepository;
+        private readonly IUserService _userService;
 
-        public UserController(IUserRepository userRepository)
+        public UserController(IUserService userService)
         {
-            _userRepository = userRepository;
+            _userService = userService;
         }
 
         /// <summary>
@@ -28,26 +29,22 @@ namespace iLG.API.Controllers
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequest request)
         {
             var response = new ApiResponse();
-            var currentUser = HttpContext.User;
+            var loginResponse = await _userService.Login(request);
 
-            if (currentUser != null && currentUser.Identity.IsAuthenticated)
+            if (!string.IsNullOrEmpty(loginResponse.Item2))
             {
-                response = response.GetResult(400);
-                return BadRequest(response);
+                if (loginResponse.Item2 == Message.Error.SERVER_ERROR)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError, loginResponse.Item2));
+                }
+
+                var result = response.GetResult(StatusCodes.Status400BadRequest, loginResponse.Item2);
+                return BadRequest(result);
             }
 
-            var user = await _userRepository.GetAsync
-            (
-                expression: x => x.Email == request.Email && !x.IsLocked && x.EmailConfirmed
-            );
+            response.Data = loginResponse.Item1;
 
-            var isValidPassword = _userRepository.CheckPassword(user, request.Password);
-
-            var roles = _userRepository.GetRoles(user);
-            var accessToken = JwtHelper.GenerateAccessToken(user.Email, user.Id, roles);
-            response = new ApiResponse(accessToken.Item1);
-
-            return response.GetResult(200);
+            return response.GetResult(StatusCodes.Status200OK);
         }
 
         [HttpGet("protected")]
