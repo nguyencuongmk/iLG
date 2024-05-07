@@ -120,7 +120,25 @@ namespace iLG.API.Services
 
         public async Task<bool> VerifyToken(string token)
         {
-            return true;
+            if (string.IsNullOrEmpty(token))
+                return false;
+
+            var email = JwtHelper.GetEmailFromToken(token);
+
+            if (string.IsNullOrEmpty(email))
+                return false;
+
+            var user = await _userRepository.GetAsync(expression: u => u.Email == email);
+
+            if (user is null)
+                return false;
+
+            var isValidToken = await _userTokenRepository.IsExistAsync
+            (
+                expression: ut => ut.Token == token && ut.UserId == user.Id && ut.ExpiredTime < DateTime.UtcNow && !ut.IsDeleted
+            );
+
+            return isValidToken;
         }
     }
 }

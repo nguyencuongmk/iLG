@@ -48,5 +48,21 @@ namespace iLG.API.Helpers
                 return (string.Empty, new DateTime());
             }
         }
+
+        public static string? GetEmailFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var jwtToken = tokenHandler.ReadJwtToken(token);
+            var claims = jwtToken.Claims;
+            var emailClaim = claims.FirstOrDefault(claim => claim.Type == JwtRegisteredClaimNames.Email);
+
+            if (emailClaim is not null)
+            {
+                var email = emailClaim.Value;
+                return email;
+            }
+
+            return null;
+        }
     }
 }

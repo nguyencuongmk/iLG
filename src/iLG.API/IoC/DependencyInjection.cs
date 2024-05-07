@@ -79,7 +79,7 @@ namespace iLG.API.IoC
             services.AddAutoMapper(typeof(Mapper));
 
             // Config Services
-            services.AddTransient<IUserService, UserService>();
+            services.AddScoped<IUserService, UserService>();
 
             // Config Exception Handler
             services.AddExceptionHandler<ExceptionHandler>();

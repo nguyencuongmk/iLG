@@ -1,44 +1,37 @@
 ﻿using iLG.API.Extensions;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 
 namespace iLG.API.Middleware
 {
     public class TokenMiddleware
     {
         private readonly RequestDelegate _next;
-        private readonly IUserService _userService;
+        private readonly IServiceScopeFactory _scopeFactory;
 
-        public TokenMiddleware(RequestDelegate next, IUserService userService)
+        public TokenMiddleware(RequestDelegate next, IServiceScopeFactory scopeFactory)
         {
             _next = next;
-            _userService = userService;
+            _scopeFactory = scopeFactory;
         }
 
         public async Task Invoke(HttpContext context)
         {
-            var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
-
-            if (string.IsNullOrEmpty(token))
+            if (context.GetEndpoint()?.Metadata.GetMetadata<IAuthorizeData>() is null)
             {
-                var response = new ApiResponse();
-                response.Errors.Add(new Error()
-                {
-                    ErrorMessage = "Invalid Token"
-                });
-
-                var result = response.GetResult(401);
-                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                await context.Response.WriteAsJsonAsync(result);
+                await _next(context);
             }
             else
             {
-                var isValidToken = await _userService.VerifyToken(token);
-                if (isValidToken)
-                {
-                    await _next(context);
-                }
-                else
+                using (var scope = _scopeFactory.CreateScope())
+            {
+                var scopedServices = scope.ServiceProvider;
+                var userService = scopedServices.GetRequiredService<IUserService>();
+
+                var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+
+                if (string.IsNullOrEmpty(token))
                 {
                     var response = new ApiResponse();
                     response.Errors.Add(new Error()
@@ -50,6 +43,27 @@ namespace iLG.API.Middleware
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsJsonAsync(result);
                 }
+                else
+                {
+                    var isValidToken = await userService.VerifyToken(token);
+                    if (isValidToken)
+                    {
+                        await _next(context);
+                    }
+                    else
+                    {
+                        var response = new ApiResponse();
+                        response.Errors.Add(new Error()
+                        {
+                            ErrorMessage = "Invalid Token"
+                        });
+
+                        var result = response.GetResult(401);
+                        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        await context.Response.WriteAsJsonAsync(result);
+                    }
+                }
+            }
             }
         }
     }

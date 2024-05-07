@@ -9,5 +9,3 @@ services:
     build:
       context: .
       dockerfile: iLG.API/Dockerfile
-volumes:
-  sqlserver_ilg:
