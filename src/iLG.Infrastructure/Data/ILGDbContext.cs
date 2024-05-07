@@ -57,7 +57,7 @@ namespace iLG.Infrastructure.Data
         public void BeforeSaveChanges()
         {
             var entities = ChangeTracker.Entries();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             foreach (var entity in entities)
             {
                 if (entity.Entity is IEntity baseEntity)

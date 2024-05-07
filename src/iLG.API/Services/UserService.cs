@@ -4,6 +4,9 @@ using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using iLG.Domain.Entities;
+using iLG.Domain.Enums;
+using iLG.Infrastructure.Extentions;
+using iLG.Infrastructure.Helpers;
 using iLG.Infrastructure.Repositories.Abstractions;
 
 namespace iLG.API.Services
@@ -28,7 +31,13 @@ namespace iLG.API.Services
 
             if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                message = Message.Error.User.LOGIN_FAILED;
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return (response, message);
+            }
+
+            if (!EmailHelper.IsValidEmail(request.Email))
+            {
+                message = Message.Error.User.INVALID_EMAIL;
                 return (response, message);
             }
 
@@ -63,7 +72,7 @@ namespace iLG.API.Services
 
             var userTokens = await _userTokenRepository.GetListAsync
             (
-                expression: ut => ut.UserId == user.Id && ut.ExpiredTime > DateTime.Now && !ut.IsDeleted,
+                expression: ut => ut.UserId == user.Id && ut.ExpiredTime > DateTime.UtcNow && !ut.IsDeleted,
                 orderBy: o => o.OrderByDescending(ut => ut.ExpiredTime)
             );
 
@@ -73,7 +82,7 @@ namespace iLG.API.Services
 
                 if (roles.Count == 0)
                 {
-                    message = Message.Error.SERVER_ERROR;
+                    message = Message.Error.Common.SERVER_ERROR;
                     return (response, message);
                 }
 
@@ -81,7 +90,7 @@ namespace iLG.API.Services
 
                 if (string.IsNullOrEmpty(accessToken.Item1))
                 {
-                    message = Message.Error.SERVER_ERROR;
+                    message = Message.Error.Common.SERVER_ERROR;
                     return (response, message);
                 }
 
@@ -89,7 +98,7 @@ namespace iLG.API.Services
                 user.UserTokens.Add(new UserToken
                 {
                     Token = accessToken.Item1,
-                    ExpiredTime = accessToken.Item2, 
+                    ExpiredTime = accessToken.Item2,
                     Platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform),
                     MachineName = Environment.MachineName,
                     CreatedBy = "system"
@@ -106,7 +115,7 @@ namespace iLG.API.Services
 
                 if (userToken == null)
                 {
-                    message = Message.Error.SERVER_ERROR;
+                    message = Message.Error.Common.SERVER_ERROR;
                     return (response, message);
                 }
 
@@ -115,6 +124,47 @@ namespace iLG.API.Services
             }
 
             return (response, message);
+
+            #endregion Business Logic
+        }
+
+        public async Task<string> Register(RegisterRequest request)
+        {
+            #region Verify Request
+
+            var message = string.Empty;
+
+            if (request == null || string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password) || string.IsNullOrEmpty(request?.FullName) || string.IsNullOrEmpty(request?.Gender))
+            {
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return message;
+            }
+
+            if (!EmailHelper.IsValidEmail(request.Email))
+            {
+                message = Message.Error.User.INVALID_EMAIL;
+                return message;
+            }
+
+            #endregion Verify Request
+
+            #region Business Logic
+
+            var user = new User
+            {
+                Email = request.Email,
+                PasswordHash = PasswordHasher.HashPassword(request.Password),
+                UserInfo = new UserInfo
+                {
+                    FullName = request.FullName,
+                    Age = request.Age,
+                    Gender = request.Gender.ToEnum<Gender>()
+                }
+            };
+
+            // Todo
+
+            return message;
 
             #endregion Business Logic
         }

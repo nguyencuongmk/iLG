@@ -9,7 +9,7 @@ namespace iLG.API.Handlers
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
         {
-            logger.LogError($"Error Message: {exception.Message}, Time of occurrence {DateTime.Now}");
+            logger.LogError($"Error Message: {exception.Message}, Time of occurrence {DateTime.UtcNow}");
 
             var problemDetails = new ProblemDetails
             {

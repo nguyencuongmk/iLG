@@ -7,6 +7,8 @@ namespace iLG.API.Services.Abstractions
     {
         Task<(LoginResponse, string)> Login(LoginRequest request);
 
+        Task<string> Register(RegisterRequest request);
+
         Task<bool> VerifyToken(string token);
     }
 }

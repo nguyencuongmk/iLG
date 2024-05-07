@@ -1,6 +1,5 @@
 ﻿using iLG.API.Constants;
 using iLG.API.Extensions;
-using iLG.API.Helpers;
 using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
@@ -33,7 +32,7 @@ namespace iLG.API.Controllers
 
             if (!string.IsNullOrEmpty(loginResponse.Item2))
             {
-                if (loginResponse.Item2 == Message.Error.SERVER_ERROR)
+                if (loginResponse.Item2 == Message.Error.Common.SERVER_ERROR)
                 {
                     return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError, loginResponse.Item2));
                 }
@@ -47,9 +46,9 @@ namespace iLG.API.Controllers
             return response.GetResult(StatusCodes.Status200OK);
         }
 
-        [HttpGet("protected")]
+        [HttpPost("register")]
         [Authorize]
-        public IActionResult Protected()
+        public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequest request)
         {
             // Lấy thông tin người dùng từ biến môi trường ClaimsPrincipal
             var username = User.Identity.Name;
