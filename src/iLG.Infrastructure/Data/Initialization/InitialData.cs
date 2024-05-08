@@ -10,33 +10,27 @@ namespace iLG.Infrastructure.Data.Initialization
         [
             new Hobby
             {
-                Title = "Traveling",
-                CreatedBy = "system"
+                Title = "Traveling"
             },
             new Hobby
             {
-                Title = "Painting",
-                CreatedBy = "system"
+                Title = "Painting"
             },
             new Hobby
             {
-                Title = "Film",
-                CreatedBy = "system"
+                Title = "Film"
             },
             new Hobby
             {
-                Title = "Music",
-                CreatedBy = "system"
+                Title = "Music"
             },
             new Hobby
             {
-                Title = "Sport",
-                CreatedBy = "system"
+                Title = "Sport"
             },
             new Hobby
             {
-                Title = "Cuisine",
-                CreatedBy = "system"
+                Title = "Cuisine"
             }
         ];
 
@@ -45,164 +39,137 @@ namespace iLG.Infrastructure.Data.Initialization
             new HobbyDetail
             {
                 Name = "Traveling alone",
-                HobbyId = 1,
-                CreatedBy = "system"
+                HobbyId = 1
             },
             new HobbyDetail
             {
                 Name = "Traveling with family",
-                HobbyId = 1,
-                CreatedBy = "system"
+                HobbyId = 1
             },
             new HobbyDetail
             {
                 Name = "Lanscape painting",
-                HobbyId = 2,
-                CreatedBy = "system"
+                HobbyId = 2
             },
             new HobbyDetail
             {
                 Name = "Portrait painting",
-                HobbyId = 2,
-                CreatedBy = "system"
+                HobbyId = 2
             },
             new HobbyDetail
             {
                 Name = "Painting still lifes",
-                HobbyId = 2,
-                CreatedBy = "system"
+                HobbyId = 2
             },
             new HobbyDetail
             {
                 Name = "Mavel",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "Korea film",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "Vietnam film",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "TV series",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "Movie theaters",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "Horror film",
-                HobbyId = 3,
-                CreatedBy = "system"
+                HobbyId = 3
             },
             new HobbyDetail
             {
                 Name = "K-POP",
-                HobbyId = 4,
-                CreatedBy = "system"
+                HobbyId = 4
             },
             new HobbyDetail
             {
                 Name = "V-POP",
-                HobbyId = 4,
-                CreatedBy = "system"
+                HobbyId = 4
             },
             new HobbyDetail
             {
                 Name = "US-UK",
-                HobbyId = 4,
-                CreatedBy = "system"
+                HobbyId = 4
             },
             new HobbyDetail
             {
                 Name = "C-POP",
-                HobbyId = 4,
-                CreatedBy = "system"
+                HobbyId = 4
             },
             new HobbyDetail
             {
                 Name = "Football",
-                HobbyId = 5,
-                CreatedBy = "system"
+                HobbyId = 5
             },
             new HobbyDetail
             {
                 Name = "Basketball",
-                HobbyId = 5,
-                CreatedBy = "system"
+                HobbyId = 5
             },
             new HobbyDetail
             {
                 Name = "Athletics",
-                HobbyId = 5,
-                CreatedBy = "system"
+                HobbyId = 5
             },
             new HobbyDetail
             {
                 Name = "Chess",
-                HobbyId = 5,
-                CreatedBy = "system"
+                HobbyId = 5
             },
             new HobbyDetail
             {
                 Name = "Tenis",
-                HobbyId = 5,
-                CreatedBy = "system"
+                HobbyId = 5
             },
             new HobbyDetail
             {
                 Name = "Tokbokki",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Pho",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Bread",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Banchan",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Kimchi",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Bulgogi",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
             new HobbyDetail
             {
                 Name = "Snacks",
-                HobbyId = 6,
-                CreatedBy = "system"
+                HobbyId = 6
             },
         ];
 
@@ -210,123 +177,100 @@ namespace iLG.Infrastructure.Data.Initialization
         [
             new Permission
             {
-                Name = "Hobby.Add",
-                CreatedBy = "system"
+                Name = "Hobby.Add"
             },
             new Permission
             {
-                Name = "Hobby.View",
-                CreatedBy = "system"
+                Name = "Hobby.View"
             },
             new Permission
             {
-                Name = "Hobby.Modify",
-                CreatedBy = "system"
+                Name = "Hobby.Modify"
+                
             },
             new Permission
             {
-                Name = "Hobby.Remove",
-                CreatedBy = "system"
+                Name = "Hobby.Remove"
             },
             new Permission
             {
-                Name = "HobbyDetail.Add",
-                CreatedBy = "system"
+                Name = "HobbyDetail.Add"
             },
             new Permission
             {
-                Name = "HobbyDetail.View",
-                CreatedBy = "system"
+                Name = "HobbyDetail.View"
             },
             new Permission
             {
-                Name = "HobbyDetail.Modify",
-                CreatedBy = "system"
+                Name = "HobbyDetail.Modify"
             },
             new Permission
             {
-                Name = "HobbyDetail.Remove",
-                CreatedBy = "system"
+                Name = "HobbyDetail.Remove"
             },
             new Permission
             {
-                Name = "Image.Add",
-                CreatedBy = "system"
+                Name = "Image.Add"
             },
             new Permission
             {
-                Name = "Image.View",
-                CreatedBy = "system"
+                Name = "Image.View"
             },
             new Permission
             {
-                Name = "Image.Modify",
-                CreatedBy = "system"
+                Name = "Image.Modify"
             },
             new Permission
             {
-                Name = "Image.Remove",
-                CreatedBy = "system"
+                Name = "Image.Remove"
             },
             new Permission
             {
-                Name = "Role.Add",
-                CreatedBy = "system"
+                Name = "Role.Add"
             },
             new Permission
             {
-                Name = "Role.View",
-                CreatedBy = "system"
+                Name = "Role.View"
             },
             new Permission
             {
-                Name = "Role.Modify",
-                CreatedBy = "system"
+                Name = "Role.Modify"
             },
             new Permission
             {
-                Name = "Role.Remove",
-                CreatedBy = "system"
+                Name = "Role.Remove"
             },
             new Permission
             {
-                Name = "User.Add",
-                CreatedBy = "system"
+                Name = "User.Add"
             },
             new Permission
             {
-                Name = "User.View",
-                CreatedBy = "system"
+                Name = "User.View"
             },
             new Permission
             {
-                Name = "User.Modify",
-                CreatedBy = "system"
+                Name = "User.Modify"
             },
             new Permission
             {
-                Name = "User.Remove",
-                CreatedBy = "system"
+                Name = "User.Remove"
             },
             new Permission
             {
-                Name = "UserMatch.Add",
-                CreatedBy = "system"
+                Name = "UserMatch.Add"
             },
             new Permission
             {
-                Name = "UserMatch.View",
-                CreatedBy = "system"
+                Name = "UserMatch.View"
             },
             new Permission
             {
-                Name = "UserMatch.Modify",
-                CreatedBy = "system"
+                Name = "UserMatch.Modify"
             },
             new Permission
             {
-                Name = "UserMatch.Remove",
-                CreatedBy = "system"
+                Name = "UserMatch.Remove"
             }
         ];
 
@@ -335,14 +279,12 @@ namespace iLG.Infrastructure.Data.Initialization
             new Role
             {
                 Name = "Admin",
-                Code = "ADM",
-                CreatedBy = "system"
+                Code = "ADM"
             },
             new Role
             {
                 Name = "User",
-                Code = "USR",
-                CreatedBy = "system"
+                Code = "USR"
             }
         ];
 
@@ -354,7 +296,7 @@ namespace iLG.Infrastructure.Data.Initialization
 
                 for (int i = 1; i <= Permissions.Count(); i++)
                 {
-                    RolePermission permission = new() { RoleId = 1, PermissionId = i, CreatedBy = "system" };
+                    RolePermission permission = new() { RoleId = 1, PermissionId = i,  };
                     permissions.Add(permission);
                 }
 
@@ -368,8 +310,7 @@ namespace iLG.Infrastructure.Data.Initialization
             {
                 Email = "admin@localhost.com",
                 EmailConfirmed = true,
-                PasswordHash = PasswordHasher.HashPassword("iLGCNS24!"),
-                CreatedBy = "system"
+                PasswordHash = PasswordHasher.HashPassword("iLGCNS24!")
             }
         ];
 
@@ -380,8 +321,7 @@ namespace iLG.Infrastructure.Data.Initialization
                 FullName = "Administrator",
                 Age = 0,
                 Gender = Gender.Unknown,
-                UserId = 1,
-                CreatedBy = "system"
+                UserId = 1
             }
         ];
 
@@ -390,8 +330,7 @@ namespace iLG.Infrastructure.Data.Initialization
             new UserInfoHobby
             {
                 UserInfoId = 1,
-                HobbyId = 1,
-                CreatedBy = "system"
+                HobbyId = 1
             }
         ];
 
@@ -400,8 +339,7 @@ namespace iLG.Infrastructure.Data.Initialization
             new UserRole
             {
                 UserId = 1,
-                RoleId = 1,
-                CreatedBy = "system"
+                RoleId = 1
             }
         ];
 
@@ -411,8 +349,7 @@ namespace iLG.Infrastructure.Data.Initialization
             {
                 UserInfoId = 1,
                 Path = "https://png.pngtree.com/element_our/20190604/ourmid/pngtree-user-avatar-boy-image_1482937.jpg",
-                Type = "Avatar",
-                CreatedBy = "system"
+                Type = "Avatar"
             }
         ];
     }

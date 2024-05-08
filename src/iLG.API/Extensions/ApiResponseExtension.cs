@@ -14,7 +14,7 @@ namespace iLG.API.Extensions
             }
             else
             {
-                if (response.Data.GetType().IsGenericType)
+                if (response.Data is not null && response.Data.GetType().IsGenericType)
                 {
                     if (response.Data.GetType().GetGenericTypeDefinition() == typeof(ICollection<>))
                         response.Result.TotalRecords = response.Data.Count;

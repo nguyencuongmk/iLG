@@ -47,13 +47,23 @@ namespace iLG.API.Controllers
         }
 
         [HttpPost("register")]
-        [Authorize]
         public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequest request)
         {
-            // Lấy thông tin người dùng từ biến môi trường ClaimsPrincipal
-            var username = User.Identity.Name;
+            var response = new ApiResponse();
+            var errorMessage = await _userService.Register(request);
 
-            return Ok($"Hello, {username}! This is a protected resource.");
+            if (!string.IsNullOrEmpty(errorMessage))
+            {
+                if (errorMessage == Message.Error.Common.SERVER_ERROR)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError, errorMessage));
+                }
+
+                var result = response.GetResult(StatusCodes.Status400BadRequest, errorMessage);
+                return BadRequest(result);
+            }
+
+            return response.GetResult(StatusCodes.Status200OK);
         }
     }
 }

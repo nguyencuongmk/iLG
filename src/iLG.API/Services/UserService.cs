@@ -15,11 +15,13 @@ namespace iLG.API.Services
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserTokenRepository _userTokenRepository;
+        private readonly IRoleRepository _roleRepository;
 
-        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository)
+        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository)
         {
             _userRepository = userRepository;
             _userTokenRepository = userTokenRepository;
+            _roleRepository = roleRepository;
         }
 
         public async Task<(LoginResponse, string)> Login(LoginRequest request)
@@ -100,8 +102,7 @@ namespace iLG.API.Services
                     Token = accessToken.Item1,
                     ExpiredTime = accessToken.Item2,
                     Platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform),
-                    MachineName = Environment.MachineName,
-                    CreatedBy = "system"
+                    MachineName = Environment.MachineName
                 });
 
                 await _userRepository.UpdateAsync(user);
@@ -150,6 +151,17 @@ namespace iLG.API.Services
 
             #region Business Logic
 
+            var role = await _roleRepository.GetAsync
+            (
+                 expression: r => r.Code == "USR"
+            );
+
+            if (role is null)
+            {
+                message = Message.Error.Common.SERVER_ERROR;
+                return message;
+            }
+
             var user = new User
             {
                 Email = request.Email,
@@ -159,10 +171,14 @@ namespace iLG.API.Services
                     FullName = request.FullName,
                     Age = request.Age,
                     Gender = request.Gender.ToEnum<Gender>()
-                }
+                },
+                Roles =
+                [
+                    role
+                ]
             };
 
-            // Todo
+            await _userRepository.CreateAsync(user);
 
             return message;
 

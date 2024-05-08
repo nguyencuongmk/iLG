@@ -11,7 +11,7 @@ namespace iLG.Domain.Abstractions
 
         public DateTime? UpdatedAt { get; set; }
 
-        public string? CreatedBy { get; set; }
+        public string? CreatedBy { get; set; } = "system";
 
         public string? UpdatedBy { get; set; }
 
@@ -26,7 +26,7 @@ namespace iLG.Domain.Abstractions
 
         public DateTime? UpdatedAt { get; set; }
 
-        public string? CreatedBy { get; set; }
+        public string? CreatedBy { get; set; } = "system";
 
         public string? UpdatedBy { get; set; }
 
