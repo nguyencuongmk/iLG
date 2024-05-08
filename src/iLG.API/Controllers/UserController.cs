@@ -32,12 +32,17 @@ namespace iLG.API.Controllers
 
             if (!string.IsNullOrEmpty(loginResponse.Item2))
             {
+                response.Errors.Add(new Error
+                {
+                    ErrorMessage = loginResponse.Item2
+                });
+
                 if (loginResponse.Item2 == Message.Error.Common.SERVER_ERROR)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError, loginResponse.Item2));
-                }
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
+                }               
 
-                var result = response.GetResult(StatusCodes.Status400BadRequest, loginResponse.Item2);
+                var result = response.GetResult(StatusCodes.Status400BadRequest);
                 return BadRequest(result);
             }
 
@@ -54,12 +59,17 @@ namespace iLG.API.Controllers
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
+                response.Errors.Add(new Error
+                {
+                    ErrorMessage = errorMessage
+                });
+
                 if (errorMessage == Message.Error.Common.SERVER_ERROR)
                 {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError, errorMessage));
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
                 }
 
-                var result = response.GetResult(StatusCodes.Status400BadRequest, errorMessage);
+                var result = response.GetResult(StatusCodes.Status400BadRequest);
                 return BadRequest(result);
             }
 
