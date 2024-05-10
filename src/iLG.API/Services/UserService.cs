@@ -1,4 +1,5 @@
-﻿using iLG.API.Constants;
+﻿using Azure;
+using iLG.API.Constants;
 using iLG.API.Helpers;
 using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
@@ -22,6 +23,61 @@ namespace iLG.API.Services
             _userRepository = userRepository;
             _userTokenRepository = userTokenRepository;
             _roleRepository = roleRepository;
+        }
+
+        public async Task<string> Activation(ActivationRequest request)
+        {
+            #region Verify Request
+
+            var message = string.Empty;
+
+            if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Otp))
+            {
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return message;
+            }
+
+            if (!EmailHelper.IsValidEmail(request.Email))
+            {
+                message = Message.Error.User.INVALID_EMAIL;
+                return message;
+            }
+
+            #endregion Verify Request
+
+            #region Business Logic
+
+            var user = await _userRepository.GetAsync(expression: u => u.Email == request.Email);
+
+            if (user is null)
+            {
+                message = Message.Error.Common.SERVER_ERROR;
+                return message;
+            }
+
+            if (user.EmailConfirmed)
+                return message;
+
+            if (DateTime.UtcNow > user.OtpExpiredTime)
+            {
+                message = Message.Error.User.EXPIRED_OTP;
+                return message;
+            }
+
+            var isValidOtp = OTPHelper.VerifyOTP(request.Otp, user.Otp);
+
+            if (!isValidOtp)
+            {
+                message = Message.Error.User.INVALID_OTP;
+                return message;
+            }
+
+            user.EmailConfirmed = true;
+            await _userRepository.UpdateAsync(user);
+
+            return message;
+
+            #endregion Business Logic
         }
 
         public async Task<(LoginResponse, string)> Login(LoginRequest request)
@@ -147,6 +203,12 @@ namespace iLG.API.Services
                 return message;
             }
 
+            if (await _userRepository.IsExistAsync(expression: u => u.Email == request.Email))
+            {
+                message = Message.Error.User.EXISTS_EMAIL;
+                return message;
+            }
+
             #endregion Verify Request
 
             #region Business Logic
@@ -175,7 +237,9 @@ namespace iLG.API.Services
                 Roles =
                 [
                     role
-                ]
+                ],
+                Otp = OTPHelper.GenerateOTP(),
+                OtpExpiredTime = DateTime.UtcNow.AddMinutes(2),
             };
 
             await _userRepository.CreateAsync(user);

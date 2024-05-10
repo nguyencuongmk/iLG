@@ -10,5 +10,7 @@ namespace iLG.API.Services.Abstractions
         Task<string> Register(RegisterRequest request);
 
         Task<bool> VerifyToken(string token);
+
+        Task<string> Activation(ActivationRequest request);
     }
 }

@@ -11,6 +11,7 @@ namespace iLG.Infrastructure.Data.Configurations
             builder.HasKey(u => u.Id);
             builder.Property(u => u.Email).IsRequired();
             builder.Property(u => u.PasswordHash).IsRequired();
+            builder.Property(u => u.Otp).HasMaxLength(6);
 
             // User and Role relationship configuration
             builder.HasMany(u => u.Roles)

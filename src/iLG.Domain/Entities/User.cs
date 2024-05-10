@@ -8,6 +8,10 @@ namespace iLG.Domain.Entities
 
         public bool EmailConfirmed { get; set; } = false;
 
+        public string? Otp { get; set; }
+
+        public DateTime? OtpExpiredTime { get; set; }
+
         public string PasswordHash { get; set; }
 
         public bool IsLocked { get; set; } = false;
