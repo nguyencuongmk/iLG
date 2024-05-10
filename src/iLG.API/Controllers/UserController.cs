@@ -4,6 +4,7 @@ using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Mvc;
+using System.Transactions;
 
 namespace iLG.API.Controllers
 {
@@ -79,9 +80,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            // using transaction
-
-            // await _emailService.SendActivationEmail(request.Email);
+            await _emailService.SendActivationEmail(request.Email);
 
             return response.GetResult(StatusCodes.Status200OK);
         }

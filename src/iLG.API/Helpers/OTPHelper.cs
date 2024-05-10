@@ -20,18 +20,12 @@ namespace iLG.API.Helpers
             return new string(otpChars);
         }
 
-        public static bool VerifyOTP(string userInputOTP, string generatedOTP)
+        public static bool VerifyOTP(string userInputOTP, string generatedOTP, DateTime? expiredTime)
         {
-            if (string.IsNullOrEmpty(userInputOTP) || string.IsNullOrEmpty(generatedOTP))
+            if (string.IsNullOrEmpty(userInputOTP) || string.IsNullOrEmpty(generatedOTP) || DateTime.UtcNow > expiredTime || userInputOTP.Length != 6 || !Regex.IsMatch(userInputOTP, "^[0-9]+$") || userInputOTP == generatedOTP)
                 return false;
 
-            if (userInputOTP.Length != 6)
-                return false;
-
-            if (!Regex.IsMatch(userInputOTP, "^[0-9]+$"))
-                return false;
-
-            return userInputOTP == generatedOTP;
+            return true;
         }
     }
 }

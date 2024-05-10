@@ -1,6 +1,4 @@
-﻿using Azure.Core;
-using iLG.API.Constants;
-using iLG.API.Helpers;
+﻿using iLG.API.Helpers;
 using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Infrastructure.Repositories.Abstractions;
@@ -29,10 +27,11 @@ namespace iLG.API.Services
             if (!EmailHelper.IsValidEmail(email))
                 return false;
 
-            if (await _userRepository.IsExistAsync(expression: u => u.Email == email))
+            if (!await _userRepository.IsExistAsync(expression: u => u.Email == email))
                 return false;
 
-            var otp = (await _userRepository.GetAsync(expression: u => u.Email == email))?.Otp;
+            var user = await _userRepository.GetAsync(expression: u => u.Email == email);
+            var otp = user?.Otp;
 
             if (string.IsNullOrEmpty(otp))
                 return false;
@@ -40,7 +39,10 @@ namespace iLG.API.Services
             var fromAddress = new MailAddress(_appSettings.MailSettings.MailServerUsername, "iLG");
             var toAddress = new MailAddress(email);
             var subject = "Account Activation";
-            var body = $"Hi {email},\n\nThe OTP code to activate your account is: {otp}\n\nBest Regard,\niLG Support";
+            var body = $"<p>Hi {user?.UserInfo.FullName},</p>" +
+                $"<p>The OTP code to activate your account is: <b>{otp}</b></p>" +
+                $"<p>Best Regard,</p>" +
+                $"<p>iLG Support</p>";
 
             var smtpClient = new SmtpClient
             {

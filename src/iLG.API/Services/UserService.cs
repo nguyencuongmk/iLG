@@ -1,5 +1,4 @@
-﻿using Azure;
-using iLG.API.Constants;
+﻿using iLG.API.Constants;
 using iLG.API.Helpers;
 using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
@@ -55,16 +54,7 @@ namespace iLG.API.Services
                 return message;
             }
 
-            if (user.EmailConfirmed)
-                return message;
-
-            if (DateTime.UtcNow > user.OtpExpiredTime)
-            {
-                message = Message.Error.User.EXPIRED_OTP;
-                return message;
-            }
-
-            var isValidOtp = OTPHelper.VerifyOTP(request.Otp, user.Otp);
+            var isValidOtp = OTPHelper.VerifyOTP(request.Otp, user.Otp, user.OtpExpiredTime);
 
             if (!isValidOtp)
             {
@@ -73,6 +63,7 @@ namespace iLG.API.Services
             }
 
             user.EmailConfirmed = true;
+            user.OtpExpiredTime = DateTime.MinValue;
             await _userRepository.UpdateAsync(user);
 
             return message;
