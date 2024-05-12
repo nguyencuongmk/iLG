@@ -11,19 +11,17 @@ using iLG.Infrastructure.Repositories.Abstractions;
 
 namespace iLG.API.Services
 {
-    public class UserService : IUserService
+    public class UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository) : IUserService
     {
-        private readonly IUserRepository _userRepository;
-        private readonly IUserTokenRepository _userTokenRepository;
-        private readonly IRoleRepository _roleRepository;
+        private readonly IUserRepository _userRepository = userRepository;
+        private readonly IUserTokenRepository _userTokenRepository = userTokenRepository;
+        private readonly IRoleRepository _roleRepository = roleRepository;
 
-        public UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository)
-        {
-            _userRepository = userRepository;
-            _userTokenRepository = userTokenRepository;
-            _roleRepository = roleRepository;
-        }
-
+        /// <summary>
+        /// Activate user account
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<string> Activation(ActivationRequest request)
         {
             #region Verify Request
@@ -54,7 +52,10 @@ namespace iLG.API.Services
                 return message;
             }
 
-            var isValidOtp = OTPHelper.VerifyOTP(request.Otp, user.Otp, user.OtpExpiredTime);
+            if (user.EmailConfirmed)
+                return message;
+
+            var isValidOtp = OtpHelper.VerifyOTP(request.Otp, user.Otp, user.OtpExpiredTime);
 
             if (!isValidOtp)
             {
@@ -63,7 +64,6 @@ namespace iLG.API.Services
             }
 
             user.EmailConfirmed = true;
-            user.OtpExpiredTime = DateTime.MinValue;
             await _userRepository.UpdateAsync(user);
 
             return message;
@@ -71,6 +71,106 @@ namespace iLG.API.Services
             #endregion Business Logic
         }
 
+        /// <summary>
+        /// Change password
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<string> ChangePassword(ChangePasswordRequest request, string email)
+        {
+            #region Verify Request
+
+            var message = string.Empty;
+
+            if (request == null || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(request.OldPassword) || string.IsNullOrEmpty(request.NewPassword))
+            {
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return message;
+            }
+
+            if (!EmailHelper.IsValidEmail(email))
+            {
+                message = Message.Error.User.INVALID_EMAIL;
+                return message;
+            }
+
+            #endregion Verify Request
+
+            #region Business Logic
+
+            var user = await _userRepository.GetAsync(u => u.Email == email);
+
+            if (user is null)
+            {
+                message = Message.Error.Common.SERVER_ERROR;
+                return message;
+            }
+
+            var isValidPassword = PasswordHasher.VerifyPassword(request.OldPassword, user.PasswordHash);
+
+            if (!isValidPassword)
+            {
+                message = "Invalid current password";
+                return message;
+            }
+
+            user.PasswordHash = PasswordHasher.HashPassword(request.NewPassword);
+            await _userRepository.UpdateAsync(user);
+
+            return message;
+
+            #endregion Business Logic
+        }
+
+        /// <summary>
+        /// Generate new password for user
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        public async Task<(string, string)> ForgotPassword(ForgotPasswordRequest request)
+        {
+            #region Verify Request
+
+            var message = string.Empty;
+
+            if (request == null || string.IsNullOrEmpty(request.Email))
+            {
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return (string.Empty, message);
+            }
+
+            if (!EmailHelper.IsValidEmail(request.Email))
+            {
+                message = Message.Error.User.INVALID_EMAIL;
+                return (string.Empty, message);
+            }
+
+            #endregion Verify Request
+
+            #region Business Logic
+
+            var user = await _userRepository.GetAsync(u => u.Email == request.Email);
+
+            if (user is null)
+            {
+                message = Message.Error.Common.SERVER_ERROR;
+                return (string.Empty, message);
+            }
+
+            string newPassword = PasswordHasher.GenerateRandomPassword(10);
+            user.PasswordHash = PasswordHasher.HashPassword(newPassword);
+            await _userRepository.UpdateAsync(user);
+
+            return (newPassword, message);
+
+            #endregion Business Logic
+        }
+
+        /// <summary>
+        /// Login user account
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<(LoginResponse, string)> Login(LoginRequest request)
         {
             #region Verify Request
@@ -176,6 +276,49 @@ namespace iLG.API.Services
             #endregion Business Logic
         }
 
+        /// <summary>
+        /// Logout user account
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        public async Task<string> Logout(int userId, string token)
+        {
+            #region Verify Request
+
+            var message = string.Empty;
+
+            if (string.IsNullOrEmpty(token))
+            {
+                message = Message.Error.User.NOT_ENOUGH_INFO;
+                return message;
+            }
+
+            #endregion Verify Request
+
+            #region Business Logic
+
+            var userToken = await _userTokenRepository.GetAsync(ut => ut.Token == token && ut.UserId == userId);
+
+            if (userToken is null)
+            {
+                message = Message.Error.Common.SERVER_ERROR;
+                return message;
+            }
+
+            userToken.ExpiredTime = DateTime.MinValue;
+            await _userTokenRepository.UpdateAsync(userToken);
+
+            return message;
+
+            #endregion Business Logic
+        }
+
+        /// <summary>
+        /// Register a new account
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         public async Task<string> Register(RegisterRequest request)
         {
             #region Verify Request
@@ -229,7 +372,7 @@ namespace iLG.API.Services
                 [
                     role
                 ],
-                Otp = OTPHelper.GenerateOTP(),
+                Otp = OtpHelper.GenerateOTP(),
                 OtpExpiredTime = DateTime.UtcNow.AddMinutes(2),
             };
 
@@ -240,6 +383,11 @@ namespace iLG.API.Services
             #endregion Business Logic
         }
 
+        /// <summary>
+        /// Verify user token
+        /// </summary>
+        /// <param name="token"></param>
+        /// <returns></returns>
         public async Task<bool> VerifyToken(string token)
         {
             if (string.IsNullOrEmpty(token))

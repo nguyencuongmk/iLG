@@ -1,4 +1,5 @@
 ﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace iLG.Infrastructure.Helpers
 {
@@ -69,6 +70,21 @@ namespace iLG.Infrastructure.Helpers
 
                 return hash;
             }
+        }
+
+        public static string GenerateRandomPassword(int length)
+        {
+            const string validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890!@#$%^&*()";
+            StringBuilder password = new();
+            Random random = new();
+
+            while (password.Length < length)
+            {
+                int index = random.Next(validChars.Length);
+                password.Append(validChars[index]);
+            }
+
+            return password.ToString();
         }
     }
 }

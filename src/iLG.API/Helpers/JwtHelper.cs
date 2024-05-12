@@ -25,7 +25,7 @@ namespace iLG.API.Helpers
                 var claimList = new List<Claim>
                 {
                     new(JwtRegisteredClaimNames.Email, email),
-                    new(JwtRegisteredClaimNames.Sub, userId.ToString())
+                    new("userId", userId.ToString())
                 };
 
                 claimList.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));

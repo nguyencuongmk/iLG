@@ -2,7 +2,7 @@
 
 namespace iLG.API.Helpers
 {
-    public static class OTPHelper
+    public static class OtpHelper
     {
         public static string GenerateOTP()
         {
@@ -22,7 +22,7 @@ namespace iLG.API.Helpers
 
         public static bool VerifyOTP(string userInputOTP, string generatedOTP, DateTime? expiredTime)
         {
-            if (string.IsNullOrEmpty(userInputOTP) || string.IsNullOrEmpty(generatedOTP) || DateTime.UtcNow > expiredTime || userInputOTP.Length != 6 || !Regex.IsMatch(userInputOTP, "^[0-9]+$") || userInputOTP == generatedOTP)
+            if (string.IsNullOrEmpty(userInputOTP) || string.IsNullOrEmpty(generatedOTP) || DateTime.UtcNow > expiredTime || userInputOTP.Length != 6 || !Regex.IsMatch(userInputOTP, "^[0-9]+$") || userInputOTP != generatedOTP)
                 return false;
 
             return true;

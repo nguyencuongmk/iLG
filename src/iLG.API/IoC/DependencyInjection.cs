@@ -5,6 +5,7 @@ using iLG.API.Middleware;
 using iLG.API.Services;
 using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
+using iLG.Infrastructure.Data.Initialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -91,8 +92,31 @@ namespace iLG.API.IoC
             return services;
         }
 
-        public static WebApplication UseApiServices(this WebApplication app)
+        public static async Task<WebApplication> UseApiServices(this WebApplication app)
         {
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger(c =>
+                {
+                    c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
+                    {
+                        swaggerDoc.Servers =
+                        [
+                            new OpenApiServer()
+                            {
+                                Url = "",
+                                Description = "Local"
+                            }
+                        ];
+                    });
+                });
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("v1/swagger.json", "ILG API");
+                });
+                await app.InitializeDatabaseAsync();
+            }
+
             // Initialize JwtHelper with dependency from DI Container
             JwtHelper.Initialize(app.Services.GetRequiredService<IOptions<AppSettings>>());
             app.UseHttpsRedirection();

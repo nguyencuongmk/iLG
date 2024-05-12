@@ -1,6 +1,5 @@
 ﻿using iLG.API.IoC;
 using iLG.API.Settings;
-using iLG.Infrastructure.Data.Initialization;
 using iLG.Infrastructure.IoC;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,30 +22,6 @@ var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 
-
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger(c =>
-    {
-        c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
-        {
-            swaggerDoc.Servers =
-            [
-                new()
-                {
-                    Url = "",
-                    Description = "Local"
-                }
-            ];
-        });
-    });
-    app.UseSwaggerUI(c =>
-    {
-        c.SwaggerEndpoint("v1/swagger.json", "ILG API");
-    });
-    await app.InitializeDatabaseAsync();
-}
-
-app.UseApiServices();
+await app.UseApiServices();
 
 app.Run();
