@@ -13,6 +13,7 @@ builder.Services.AddInfrastructureServices(builder.Configuration)
 builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                .AddEnvironmentVariables()
                 .Build();
 
 // Config AppSettings

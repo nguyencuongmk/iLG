@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using iLG.Infrastructure.Loggers;
+using System.Diagnostics;
 using System.Text;
 
 namespace iLG.API.Middleware
@@ -20,7 +21,10 @@ namespace iLG.API.Middleware
             var requestBody = await ReadRequestBody(context.Request);
 
             // Log request information
-            _logger.LogInformation($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path} - Request Body: {requestBody}");
+            //_logger.LogInformation($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path} - Request Body: {requestBody}", requestBody);
+
+            _logger.LogInformationWithRequestBody($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path}", requestBody);
+
 
             // Set the response body into a Stream to log the response
             var originalBodyStream = context.Response.Body;
