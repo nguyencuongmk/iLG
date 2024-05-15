@@ -11,4 +11,4 @@ services:
     image: ${DOCKER_REGISTRY-}ilgapi
     build:
       context: .
-      dockerfile: iLG.API/Dockerfile
+      dockerfile: ./../iLG.API/Dockerfile

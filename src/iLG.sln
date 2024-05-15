@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iLG.Domain", "iLG.Domain\iL
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iLG.Infrastructure", "iLG.Infrastructure\iLG.Infrastructure.csproj", "{08463640-CC14-4DA7-B08D-622BD3B19D9A}"
 EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{2BFE84EA-5A00-4D9D-A361-DEE24016C428}"
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "iLG.Docker\docker-compose.dcproj", "{2BFE84EA-5A00-4D9D-A361-DEE24016C428}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
