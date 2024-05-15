@@ -22,7 +22,7 @@ services:
 
   ilg.api:
     env_file:
-      - .env.development
+      - .env.Development
     ports:
       - "6080:8080"
       - "6081:8081"

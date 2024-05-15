@@ -1,4 +1,5 @@
-﻿using iLG.Infrastructure.Data;
+﻿using dotenv.net;
+using iLG.Infrastructure.Data;
 using iLG.Infrastructure.Loggers;
 using iLG.Infrastructure.Repositories;
 using iLG.Infrastructure.Repositories.Abstractions;
@@ -14,6 +15,13 @@ namespace iLG.Infrastructure.IoC
     {
         public static IServiceCollection AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
+            var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+            if (environment == "Local")
+            {
+                DotEnv.Load(new DotEnvOptions(envFilePaths: [".env.Local"]));
+                // todo
+            }
+
             // SQL Server
             var connectionString = configuration.GetConnectionString("Database");
             services.AddDbContext<ILGDbContext>(options => options.UseLazyLoadingProxies().UseSqlServer(connectionString));

@@ -9,13 +9,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddInfrastructureServices(builder.Configuration)
                 .AddApiServices(builder.Configuration);
 
-// Config appsettings.json
-builder.Configuration.SetBasePath(builder.Environment.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                .AddEnvironmentVariables()
-                .Build();
-
 // Config AppSettings
 builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSettings"));
 
