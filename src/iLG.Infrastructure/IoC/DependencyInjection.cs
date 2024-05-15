@@ -3,6 +3,7 @@ using iLG.Infrastructure.Data;
 using iLG.Infrastructure.Loggers;
 using iLG.Infrastructure.Repositories;
 using iLG.Infrastructure.Repositories.Abstractions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,8 +19,8 @@ namespace iLG.Infrastructure.IoC
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (environment == "Local")
             {
-                DotEnv.Load(new DotEnvOptions(envFilePaths: [".env.Local"]));
-                // todo
+                DotEnv.Load(new DotEnvOptions(envFilePaths: ["./../iLG.Docker/.env.Local"]));
+                ((ConfigurationManager)configuration).AddEnvironmentVariables();
             }
 
             // SQL Server

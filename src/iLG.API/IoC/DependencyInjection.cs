@@ -94,19 +94,29 @@ namespace iLG.API.IoC
 
         public static async Task<WebApplication> UseApiServices(this WebApplication app)
         {
-            if (app.Environment.IsDevelopment())
+            if (app.Environment.IsDevelopment() || app.Environment.IsEnvironment("Local"))
             {
                 app.UseSwagger(c =>
                 {
+                    var openApiServer = app.Environment.EnvironmentName switch
+                    {
+                        "Development" => new OpenApiServer()
+                        {
+                            Url = "",
+                            Description = "Development"
+                        },
+                        _ => new OpenApiServer()
+                        {
+                            Url = "",
+                            Description = "Local"
+                        }
+                    };
+
                     c.PreSerializeFilters.Add((swaggerDoc, httpReq) =>
                     {
                         swaggerDoc.Servers =
                         [
-                            new OpenApiServer()
-                            {
-                                Url = "",
-                                Description = "Local"
-                            }
+                            openApiServer
                         ];
                     });
                 });
