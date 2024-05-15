@@ -21,14 +21,8 @@ services:
       - "1433:1433"
 
   ilg.api:
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ASPNETCORE_HTTP_PORTS=8080
-      - ASPNETCORE_HTTPS_PORTS=8081
-      - ConnectionStrings__Database=Server=ilgdb;Database=ilgdb;User Id=sa;Password=iLGCNS24!;Encrypt=false;TrustServerCertificate=True
-      - MongoDb__Connection=mongodb://ilgcns:iLGCNS24!@loggingdb/?authSource=admin
-      - MongoDb__LoggingDatabase=loggingdb
-      - MongoDb__LoggingCollection=logging
+    env_file:
+      - .env.development
     ports:
       - "6080:8080"
       - "6081:8081"
