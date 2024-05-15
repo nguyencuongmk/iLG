@@ -18,16 +18,4 @@ namespace iLG.Infrastructure.Loggers
 
         public string? Properties { get; set; }
     }
-
-    public class LogEntryWrapper
-    {
-        public string Message { get; set; }
-
-        public string RequestBody { get; set; }
-
-        public override string ToString()
-        {
-            return $"{Message} - Request Body: {RequestBody}";
-        }
-    }
 }

@@ -20,11 +20,7 @@ namespace iLG.API.Middleware
             // Read request body
             var requestBody = await ReadRequestBody(context.Request);
 
-            // Log request information
-            //_logger.LogInformation($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path} - Request Body: {requestBody}", requestBody);
-
-            _logger.LogInformationWithRequestBody($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path}", requestBody);
-
+            _logger.LogInformation($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path}", requestBody);
 
             // Set the response body into a Stream to log the response
             var originalBodyStream = context.Response.Body;
@@ -47,7 +43,7 @@ namespace iLG.API.Middleware
                 var responseBodyContent = await ReadResponseBody(context.Response);
 
                 // Log response information
-                _logger.LogInformation($"[END] Handled {context.Request.Method} with Response Status Code: {context.Response.StatusCode} - Response Body: {responseBodyContent}");
+                _logger.LogInformation($"[END] Handled {context.Request.Method} with Response Status Code: {context.Response.StatusCode}", responseBodyContent);
 
                 // Reset response body
                 responseBody.Seek(0, SeekOrigin.Begin);

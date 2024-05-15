@@ -38,10 +38,10 @@ namespace iLG.Infrastructure.Loggers
             return builder;
         }
 
-        public static void LogInformationWithRequestBody<T>(this ILogger<T> logger, string message, string requestBody)
+        public static void LogInformation<T>(this ILogger<T> logger, string message, string requestBody)
         {
-            var logEntry = new LogEntryWrapper { Message = message, RequestBody = requestBody };
-            logger.Log(LogLevel.Information, 0, logEntry, null, (state, _) => state.ToString());
+            var logEntry = new LogEntry { Message = message, Properties = requestBody };
+            logger.Log(LogLevel.Information, 0, logEntry, null, (state, _) => state.Message);
         }
     }
 }

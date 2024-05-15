@@ -14,15 +14,9 @@ namespace iLG.Infrastructure.Loggers
             _logCollection = logCollection;
         }
 
-        public IDisposable BeginScope<TState>(TState state)
-        {
-            return null; // Không hỗ trợ scope trong ví dụ này
-        }
+        public IDisposable BeginScope<TState>(TState state) => null;
 
-        public bool IsEnabled(LogLevel logLevel)
-        {
-            return true; // Luôn luôn bật log trong ví dụ này
-        }
+        public bool IsEnabled(LogLevel logLevel) => true;
 
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
@@ -48,9 +42,9 @@ namespace iLG.Infrastructure.Loggers
 
         private string? GetProperties<TState>(TState state)
         {
-            if (state is LogEntryWrapper logEntryWrapper)
+            if (state is LogEntry logEntry)
             {
-                return logEntryWrapper.RequestBody;
+                return logEntry.Properties;
             }
 
             return null;
