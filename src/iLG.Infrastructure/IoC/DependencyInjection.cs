@@ -19,7 +19,7 @@ namespace iLG.Infrastructure.IoC
             var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
             if (environment == "Local")
             {
-                DotEnv.Load(new DotEnvOptions(envFilePaths: ["./../iLG.Docker/.env.Local"]));
+                DotEnv.Load(new DotEnvOptions(envFilePaths: ["./../iLG.Docker/environment/ilgapi/.env.Local"]));
                 ((ConfigurationManager)configuration).AddEnvironmentVariables();
             }
 

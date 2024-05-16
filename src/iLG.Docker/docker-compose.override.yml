@@ -3,26 +3,25 @@ version: '3.4'
 services:
   loggingdb:
     container_name: loggingdb
-    environment:
-      - MONGO_INITDB_DATABASE=loggingdb
-      - MONGO_INITDB_ROOT_USERNAME=ilgcns
-      - MONGO_INITDB_ROOT_PASSWORD=iLGCNS24!
+    env_file:
+     - ./environment/loggingdb/.env.Development
     restart: always
     ports:
       - 27017:27017
 
   ilgdb:
     container_name: ilgdb
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=iLGCNS24!
+    env_file:
+      - ./environment/ilgdb/.env.Development
     restart: always
     ports:
       - "1433:1433"
+    volumes:
+      - ilgdb_data:/var/opt/mssql
 
   ilg.api:
     env_file:
-      - .env.Development
+      - ./environment/ilgapi/.env.Development
     ports:
       - "6080:8080"
       - "6081:8081"
