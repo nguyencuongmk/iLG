@@ -1,7 +1,10 @@
 ﻿using iLG.API.Extensions;
 using iLG.API.Models.Responses;
+using iLG.Infrastructure.Extentions;
 using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace iLG.API.Handlers
 {
@@ -9,7 +12,7 @@ namespace iLG.API.Handlers
     {
         public async ValueTask<bool> TryHandleAsync(HttpContext context, Exception exception, CancellationToken cancellationToken)
         {
-            logger.LogError($"Error Message: {exception.Message}, Time of occurrence {DateTime.UtcNow}");
+            logger.WriteLog(LogLevel.Error, $"[Exception] {exception.Message}", JsonConvert.SerializeObject(new { errorMessage = exception.Message, requestUrl = context.Request.GetDisplayUrl(), timeStamp = DateTime.UtcNow }, Formatting.Indented));
 
             var problemDetails = new ProblemDetails
             {

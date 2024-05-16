@@ -1,9 +1,9 @@
 ﻿using dotenv.net;
 using iLG.Infrastructure.Data;
+using iLG.Infrastructure.Extentions;
 using iLG.Infrastructure.Loggers;
 using iLG.Infrastructure.Repositories;
 using iLG.Infrastructure.Repositories.Abstractions;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +56,6 @@ namespace iLG.Infrastructure.IoC
                     return provider.GetRequiredService<IMongoCollection<LogEntry>>();
                 });
             });
-
 
             return services;
         }

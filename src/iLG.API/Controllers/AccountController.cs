@@ -30,6 +30,9 @@ namespace iLG.API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequest request)
         {
+            var a = 1;
+            var b = 0;
+            var c = a/b;
             var response = new ApiResponse();
             var loginResponse = await _userService.Login(request);
 

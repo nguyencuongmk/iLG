@@ -29,19 +29,4 @@ namespace iLG.Infrastructure.Loggers
         {
         }
     }
-
-    public static class LoggingExtensions
-    {
-        public static ILoggingBuilder AddMongoDBLogger(this ILoggingBuilder builder, Func<IServiceProvider, IMongoCollection<LogEntry>> collectionFactory)
-        {
-            builder.AddProvider(new LogEntryLoggerProvider(collectionFactory, builder.Services.BuildServiceProvider().GetRequiredService<IServiceScopeFactory>()));
-            return builder;
-        }
-
-        public static void LogInformation<T>(this ILogger<T> logger, string message, string requestBody)
-        {
-            var logEntry = new LogEntry { Message = message, Properties = requestBody };
-            logger.Log(LogLevel.Information, 0, logEntry, null, (state, _) => state.Message);
-        }
-    }
 }

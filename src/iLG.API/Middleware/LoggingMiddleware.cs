@@ -1,4 +1,7 @@
-﻿using iLG.Infrastructure.Loggers;
+﻿using iLG.Infrastructure.Extentions;
+using Microsoft.AspNetCore.Http.Extensions;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Text;
 
@@ -20,7 +23,7 @@ namespace iLG.API.Middleware
             // Read request body
             var requestBody = await ReadRequestBody(context.Request);
 
-            _logger.LogInformation($"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path}", requestBody);
+            _logger.WriteLog(LogLevel.Information, $"[START] Handle Request Method: {context.Request.Method} - Request Path: {context.Request.Path}", requestBody);
 
             // Set the response body into a Stream to log the response
             var originalBodyStream = context.Response.Body;
@@ -37,13 +40,13 @@ namespace iLG.API.Middleware
                 timer.Stop();
                 var timeTaken = timer.Elapsed;
                 if (timeTaken.Seconds > 3)
-                    _logger.LogWarning($"[PERFORMANCE] The request {context.Request.Method} took {timeTaken.Seconds}s");
+                    _logger.WriteLog(LogLevel.Warning, $"[PERFORMANCE] The request {context.Request.Method} took {timeTaken.Seconds}s", JsonConvert.SerializeObject(new { requestUrl = context.Request.GetDisplayUrl() }, Formatting.Indented));
 
                 // Read response body
                 var responseBodyContent = await ReadResponseBody(context.Response);
 
                 // Log response information
-                _logger.LogInformation($"[END] Handled {context.Request.Method} with Response Status Code: {context.Response.StatusCode}", responseBodyContent);
+                _logger.WriteLog(LogLevel.Information, $"[END] Handled {context.Request.Method} with Response Status Code: {context.Response.StatusCode}", responseBodyContent);
 
                 // Reset response body
                 responseBody.Seek(0, SeekOrigin.Begin);
@@ -66,7 +69,7 @@ namespace iLG.API.Middleware
             response.Body.Seek(0, SeekOrigin.Begin);
             var responseBody = await new StreamReader(response.Body).ReadToEndAsync();
             response.Body.Seek(0, SeekOrigin.Begin);
-            return responseBody;
+            return JToken.Parse(responseBody).ToString(Formatting.Indented);
         }
     }
 }
