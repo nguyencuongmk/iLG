@@ -12,7 +12,7 @@
             }
             else
             {
-                throw new ArgumentException($"Cannot convert '{value}' to enum type {typeof(T)}");
+                throw new ArgumentException($"{value} is not type of {typeof(T)}");
             }
         }
     }

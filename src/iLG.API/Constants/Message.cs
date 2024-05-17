@@ -28,6 +28,7 @@
                 public const string LOGIN_FAILED = "Email or Password is invalid";
                 public const string INVALID_EMAIL = "Email is invalid";
                 public const string EXISTS_EMAIL = "Email already exists";
+                public const string NOT_EXISTS_USER = "User is not exists";
                 public const string ACCOUNT_LOCKED = "Account is locked";
                 public const string EMAIL_NOT_YET_CONFIRMED = "Account has not been confirmed by email";
                 public const string INVALID_TOKEN = "Invalid token";
