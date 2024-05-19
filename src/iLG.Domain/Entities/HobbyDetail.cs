@@ -9,5 +9,7 @@ namespace iLG.Domain.Entities
         public int HobbyId { get; set; }
 
         public virtual Hobby Hobby { get; set; }
+
+        public virtual List<UserInfo> UserInfos { get; set; } = [];
     }
 }

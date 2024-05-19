@@ -23,7 +23,7 @@ namespace iLG.Infrastructure.Data.Initialization
             await SeedRolePermissionAsync(context);
             await SeedUserAsync(context);
             await SeedUserInfoAsync(context);
-            await SeedUserInfoHobbyAsync(context);
+            await SeedUserInfoHobbyDetailAsync(context);
             await SeedUserRoleAsync(context);
             await SeedImageAsync(context);
         }
@@ -91,11 +91,11 @@ namespace iLG.Infrastructure.Data.Initialization
             }
         }
 
-        private static async Task SeedUserInfoHobbyAsync(ILGDbContext context)
+        private static async Task SeedUserInfoHobbyDetailAsync(ILGDbContext context)
         {
-            if (!await context.UserInfoHobbies.AnyAsync())
+            if (!await context.UserInfoHobbyDetails.AnyAsync())
             {
-                await context.UserInfoHobbies.AddRangeAsync(InitialData.UserInfoHobbies);
+                await context.UserInfoHobbyDetails.AddRangeAsync(InitialData.UserInfoHobbyDetails);
                 await context.SaveChangesAsync();
             }
         }

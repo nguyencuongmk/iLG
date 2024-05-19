@@ -11,16 +11,10 @@ namespace iLG.API.Controllers
 {
     [Route("api/accounts")]
     [ApiController]
-    public class AccountController : ControllerBase
+    public class AccountController(IUserService userService, IEmailService emailService) : ControllerBase
     {
-        private readonly IUserService _userService;
-        private readonly IEmailService _emailService;
-
-        public AccountController(IUserService userService, IEmailService emailService)
-        {
-            _userService = userService;
-            _emailService = emailService;
-        }
+        private readonly IUserService _userService = userService;
+        private readonly IEmailService _emailService = emailService;
 
         /// <summary>
         /// Login user

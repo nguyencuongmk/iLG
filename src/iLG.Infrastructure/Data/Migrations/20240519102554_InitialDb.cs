@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace iLG.Infrastructure.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class InitializeDb : Migration
+    public partial class InitialDb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -269,11 +269,11 @@ namespace iLG.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInfoHobbies",
+                name: "UserInfoHobbyDetails",
                 columns: table => new
                 {
                     UserInfoId = table.Column<int>(type: "int", nullable: false),
-                    HobbyId = table.Column<int>(type: "int", nullable: false),
+                    HobbyDetailId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -283,15 +283,15 @@ namespace iLG.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInfoHobbies", x => new { x.UserInfoId, x.HobbyId });
+                    table.PrimaryKey("PK_UserInfoHobbyDetails", x => new { x.UserInfoId, x.HobbyDetailId });
                     table.ForeignKey(
-                        name: "FK_UserInfoHobbies_Hobbies_HobbyId",
-                        column: x => x.HobbyId,
-                        principalTable: "Hobbies",
+                        name: "FK_UserInfoHobbyDetails_HobbyDetails_HobbyDetailId",
+                        column: x => x.HobbyDetailId,
+                        principalTable: "HobbyDetails",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserInfoHobbies_UserInfos_UserInfoId",
+                        name: "FK_UserInfoHobbyDetails_UserInfos_UserInfoId",
                         column: x => x.UserInfoId,
                         principalTable: "UserInfos",
                         principalColumn: "Id",
@@ -340,9 +340,9 @@ namespace iLG.Infrastructure.Data.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInfoHobbies_HobbyId",
-                table: "UserInfoHobbies",
-                column: "HobbyId");
+                name: "IX_UserInfoHobbyDetails_HobbyDetailId",
+                table: "UserInfoHobbyDetails",
+                column: "HobbyDetailId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserInfos_UserId",
@@ -370,16 +370,13 @@ namespace iLG.Infrastructure.Data.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "HobbyDetails");
-
-            migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "UserInfoHobbies");
+                name: "UserInfoHobbyDetails");
 
             migrationBuilder.DropTable(
                 name: "UserMatches");
@@ -394,13 +391,16 @@ namespace iLG.Infrastructure.Data.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "Hobbies");
+                name: "HobbyDetails");
 
             migrationBuilder.DropTable(
                 name: "UserInfos");
 
             migrationBuilder.DropTable(
                 name: "Roles");
+
+            migrationBuilder.DropTable(
+                name: "Hobbies");
 
             migrationBuilder.DropTable(
                 name: "Users");

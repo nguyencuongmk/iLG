@@ -82,6 +82,7 @@ namespace iLG.API.IoC
             // Config Services
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
+            services.AddScoped<IUserInfoService, UserInfoService>();
 
             // Config Exception Handler
             services.AddExceptionHandler<ExceptionHandler>();

@@ -30,6 +30,7 @@ namespace iLG.Infrastructure.IoC
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IRoleRepository, RoleRepository>();
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
+            services.AddScoped<IUserInfoRepository, UserInfoRepository>();
 
             //MongoDB
             services.AddSingleton(provider =>

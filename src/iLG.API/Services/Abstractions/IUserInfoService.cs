@@ -5,6 +5,6 @@ namespace iLG.API.Services.Abstractions
 {
     public interface IUserInfoService
     {
-        Task<(SearchSuitableResponse, string)> SearchSuitableUser(SearchSuitableRequest request);
+        Task<(List<UserSuitableResponse>, string)> SearchSuitableUser(int userId, int minAge, int maxAge, string gender, int pageIndex, int pageSize);
     }
 }

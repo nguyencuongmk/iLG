@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace iLG.API.Models.Responses
 {
-    public class SearchSuitableResponse
+    public class UserSuitableResponse
     {
         [JsonProperty("fullName")]
         public string FullName { get; set; }
@@ -12,7 +12,7 @@ namespace iLG.API.Models.Responses
         public int Age { get; set; }
 
         [JsonProperty("gender")]
-        public Gender Gender { get; set; }
+        public string Gender { get; set; }
 
         [JsonProperty("nickName")]
         public string? Nickname { get; set; }
@@ -33,7 +33,7 @@ namespace iLG.API.Models.Responses
         public List<ImageResponse> Images { get; set; } = [];
 
         [JsonProperty("sameHobbies")]
-        public List<string> SameHobbies { get; set; } = [];
+        public List<string?> SameHobbies { get; set; } = [];
     }
 
     public class ImageResponse

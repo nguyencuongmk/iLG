@@ -20,13 +20,13 @@ namespace iLG.Infrastructure.Data.Configurations
                    .WithOne(i => i.UserInfo)
                    .HasForeignKey(i => i.UserInfoId);
 
-            // Cấu hình quan hệ của UserInfo và Hobby
-            builder.HasMany(ui => ui.Hobbies)
+            // Cấu hình quan hệ của UserInfo và HobbyDetail
+            builder.HasMany(ui => ui.HobbyDetails)
                    .WithMany(h => h.UserInfos)
-                   .UsingEntity<UserInfoHobby>(j => j.HasOne(uh => uh.Hobby).WithMany().HasForeignKey(uh => uh.HobbyId), j => j.HasOne(uh => uh.UserInfo).WithMany().HasForeignKey(uh => uh.UserInfoId), j =>
+                   .UsingEntity<UserInfoHobbyDetail>(j => j.HasOne(uh => uh.HobbyDetail).WithMany().HasForeignKey(uh => uh.HobbyDetailId), j => j.HasOne(uh => uh.UserInfo).WithMany().HasForeignKey(uh => uh.UserInfoId), j =>
                      {
-                         j.HasKey(uh => new { uh.UserInfoId, uh.HobbyId });
-                         j.ToTable("UserInfoHobbies");
+                         j.HasKey(uh => new { uh.UserInfoId, uh.HobbyDetailId });
+                         j.ToTable("UserInfoHobbyDetails");
                      });
 
             // Cấu hình quan hệ của UserInfo và UserMatch

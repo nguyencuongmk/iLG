@@ -7,7 +7,5 @@ namespace iLG.Domain.Entities
         public string? Title { get; set; }
 
         public virtual List<HobbyDetail> HobbyDetails { get; set; } = [];
-
-        public virtual List<UserInfo> UserInfos { get; set; } = [];
     }
 }

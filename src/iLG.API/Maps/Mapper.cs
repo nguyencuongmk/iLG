@@ -10,6 +10,7 @@ namespace iLG.API.Maps
         {
             CreateMap<Hobby, HobbyResponse>();
             CreateMap<HobbyDetail, HobbyResponse.HobbyDetailResponse>();
+            CreateMap<Image, ImageResponse>().ReverseMap();
         }
     }
 }

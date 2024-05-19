@@ -370,12 +370,12 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.ToTable("UserInfos");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobby", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobbyDetail", b =>
                 {
                     b.Property<int>("UserInfoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HobbyId")
+                    b.Property<int>("HobbyDetailId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -396,11 +396,11 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserInfoId", "HobbyId");
+                    b.HasKey("UserInfoId", "HobbyDetailId");
 
-                    b.HasIndex("HobbyId");
+                    b.HasIndex("HobbyDetailId");
 
-                    b.ToTable("UserInfoHobbies", (string)null);
+                    b.ToTable("UserInfoHobbyDetails", (string)null);
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.UserMatch", b =>
@@ -578,11 +578,11 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobby", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobbyDetail", b =>
                 {
-                    b.HasOne("iLG.Domain.Entities.Hobby", "Hobby")
+                    b.HasOne("iLG.Domain.Entities.HobbyDetail", "HobbyDetail")
                         .WithMany()
-                        .HasForeignKey("HobbyId")
+                        .HasForeignKey("HobbyDetailId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -592,7 +592,7 @@ namespace iLG.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Hobby");
+                    b.Navigation("HobbyDetail");
 
                     b.Navigation("UserInfo");
                 });

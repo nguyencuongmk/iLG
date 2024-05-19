@@ -12,5 +12,3 @@ services:
     build:
       context: .
       dockerfile: ./../iLG.API/Dockerfile
-volumes:
-  ilgdb_data:

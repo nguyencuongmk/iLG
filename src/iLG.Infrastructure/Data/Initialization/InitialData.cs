@@ -325,12 +325,12 @@ namespace iLG.Infrastructure.Data.Initialization
             }
         ];
 
-        public static IEnumerable<UserInfoHobby> UserInfoHobbies =>
+        public static IEnumerable<UserInfoHobbyDetail> UserInfoHobbyDetails =>
         [
-            new UserInfoHobby
+            new UserInfoHobbyDetail
             {
                 UserInfoId = 1,
-                HobbyId = 1
+                HobbyDetailId = 1
             }
         ];
 
