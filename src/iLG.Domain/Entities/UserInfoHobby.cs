@@ -2,14 +2,14 @@
 
 namespace iLG.Domain.Entities
 {
-    public class UserInfoHobbyDetail : Entity
+    public class UserInfoHobby : Entity
     {
         public int UserInfoId { get; set; }
 
-        public int HobbyDetailId { get; set; }
+        public int HobbyId { get; set; }
+
+        public virtual Hobby Hobby { get; set; }
 
         public virtual UserInfo UserInfo { get; set; }
-
-        public virtual HobbyDetail HobbyDetail { get; set; }
     }
 }

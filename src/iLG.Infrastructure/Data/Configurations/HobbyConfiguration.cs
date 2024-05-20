@@ -8,13 +8,8 @@ namespace iLG.Infrastructure.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<Hobby> builder)
         {
-            builder.HasKey(h => h.Id);
-            builder.Property(h => h.Title).HasMaxLength(255).IsRequired();
-
-            // Cấu hình quan hệ của Hobby và HobbyDetail
-            builder.HasMany(h => h.HobbyDetails)
-                   .WithOne(hd => hd.Hobby)
-                   .HasForeignKey(hd => hd.HobbyId);
+            builder.HasKey(hd => hd.Id);
+            builder.Property(hd => hd.Name).HasMaxLength(255).IsRequired();
         }
     }
 }

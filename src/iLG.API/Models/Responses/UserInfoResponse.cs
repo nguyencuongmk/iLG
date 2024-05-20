@@ -35,6 +35,6 @@ namespace iLG.API.Models.Responses
         public List<ImageResponse> Images { get; set; } = [];
 
         [JsonProperty("hobbies")]
-        public List<HobbyDetailResponse> HobbyDetails { get; set; }
+        public List<HobbyResponse> Hobbies { get; set; }
     }
 }

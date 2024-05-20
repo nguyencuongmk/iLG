@@ -11,9 +11,9 @@ namespace iLG.Infrastructure.Data
         {
         }
 
-        public DbSet<Hobby> Hobbies => Set<Hobby>();
+        public DbSet<HobbyCategory> HobbyCategories => Set<HobbyCategory>();
 
-        public DbSet<HobbyDetail> HobbyDetails => Set<HobbyDetail>();
+        public DbSet<Hobby> Hobbies => Set<Hobby>();
 
         public DbSet<Image> Images => Set<Image>();
 
@@ -27,7 +27,7 @@ namespace iLG.Infrastructure.Data
 
         public DbSet<UserInfo> UserInfos => Set<UserInfo>();
 
-        public DbSet<UserInfoHobbyDetail> UserInfoHobbyDetails => Set<UserInfoHobbyDetail>();
+        public DbSet<UserInfoHobby> UserInfoHobby => Set<UserInfoHobby>();
 
         public DbSet<UserMatch> UserMatches => Set<UserMatch>();
 

@@ -4,8 +4,12 @@ namespace iLG.Domain.Entities
 {
     public class Hobby : Entity<int>
     {
-        public string? Title { get; set; }
+        public string? Name { get; set; }
 
-        public virtual List<HobbyDetail> HobbyDetails { get; set; } = [];
+        public int HobbyCategoryId { get; set; }
+
+        public virtual HobbyCategory HobbyCategory { get; set; }
+
+        public virtual List<UserInfo> UserInfos { get; set; } = [];
     }
 }

@@ -2,7 +2,7 @@
 
 namespace iLG.Infrastructure.Repositories.Abstractions
 {
-    public interface IHobbyDetailRepository : IRepository<HobbyDetail>
+    public interface IHobbyCategoryRepository : IRepository<HobbyCategory>
     {
     }
 }

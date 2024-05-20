@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
 
-namespace iLG.API.Models.Responses
+namespace iLG.API.Models.Requests
 {
-    public class ImageResponse
+    public class ImageRequest
     {
-        [JsonProperty("Path")]
+        [JsonProperty("path")]
         public string? Path { get; set; }
 
         [JsonProperty("type")]

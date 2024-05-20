@@ -16,16 +16,25 @@ namespace iLG.Infrastructure.Data.Initialization
 
         private static async Task SeedAsync(ILGDbContext context)
         {
+            await SeedHobbyCategoryAsync(context);
             await SeedHobbyAsync(context);
-            await SeedHobbyDetailAsync(context);
             await SeedPermissionAsync(context);
             await SeedRoleAsync(context);
             await SeedRolePermissionAsync(context);
             await SeedUserAsync(context);
             await SeedUserInfoAsync(context);
-            await SeedUserInfoHobbyDetailAsync(context);
+            await SeedUserInfoHobbyAsync(context);
             await SeedUserRoleAsync(context);
             await SeedImageAsync(context);
+        }
+
+        private static async Task SeedHobbyCategoryAsync(ILGDbContext context)
+        {
+            if (!await context.HobbyCategories.AnyAsync())
+            {
+                await context.HobbyCategories.AddRangeAsync(InitialData.HobbyCategories);
+                await context.SaveChangesAsync();
+            }
         }
 
         private static async Task SeedHobbyAsync(ILGDbContext context)
@@ -33,15 +42,6 @@ namespace iLG.Infrastructure.Data.Initialization
             if (!await context.Hobbies.AnyAsync())
             {
                 await context.Hobbies.AddRangeAsync(InitialData.Hobbies);
-                await context.SaveChangesAsync();
-            }
-        }
-
-        private static async Task SeedHobbyDetailAsync(ILGDbContext context)
-        {
-            if (!await context.HobbyDetails.AnyAsync())
-            {
-                await context.HobbyDetails.AddRangeAsync(InitialData.HobbyDetails);
                 await context.SaveChangesAsync();
             }
         }
@@ -91,11 +91,11 @@ namespace iLG.Infrastructure.Data.Initialization
             }
         }
 
-        private static async Task SeedUserInfoHobbyDetailAsync(ILGDbContext context)
+        private static async Task SeedUserInfoHobbyAsync(ILGDbContext context)
         {
-            if (!await context.UserInfoHobbyDetails.AnyAsync())
+            if (!await context.UserInfoHobby.AnyAsync())
             {
-                await context.UserInfoHobbyDetails.AddRangeAsync(InitialData.UserInfoHobbyDetails);
+                await context.UserInfoHobby.AddRangeAsync(InitialData.UserInfoHobby);
                 await context.SaveChangesAsync();
             }
         }

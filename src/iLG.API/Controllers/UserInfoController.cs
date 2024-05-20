@@ -1,5 +1,6 @@
 ﻿using iLG.API.Constants;
 using iLG.API.Extensions;
+using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using iLG.Domain.Entities;
@@ -96,6 +97,15 @@ namespace iLG.API.Controllers
             response.Data = userResponse.Item1;
 
             return response.GetResult(StatusCodes.Status200OK);
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<ActionResult<ApiResponse>> UpdateUserInfo(int id, [FromBody] UserInfoRequest request)
+        {
+            var response = new ApiResponse();
+            // Todo
+
+            throw new NotImplementedException();
         }
     }
 }

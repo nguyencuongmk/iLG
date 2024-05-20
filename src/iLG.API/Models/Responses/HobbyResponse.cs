@@ -1,9 +1,13 @@
-﻿namespace iLG.API.Models.Responses
+﻿using Newtonsoft.Json;
+
+namespace iLG.API.Models.Responses
 {
     public class HobbyResponse
     {
-        public string Title { get; set; }
+        [JsonProperty("name")]
+        public string? Name { get; set; }
 
-        public List<HobbyDetailResponse> HobbyDetails { get; set; }
+        [JsonProperty("hobbyCategoryId")]
+        public int HobbyCategoryId { get; set; }
     }
 }

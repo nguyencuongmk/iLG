@@ -10,16 +10,16 @@ namespace iLG.API.Controllers
     [Route("api/[controller]")]
     [ApiController]
     [Authorize]
-    public class HobbyController(IHobbyRepository hobbyRepository, IMapper mapper) : ControllerBase
+    public class HobbyController(IHobbyCategoryRepository hobbyRepository, IMapper mapper) : ControllerBase
     {
-        private readonly IHobbyRepository _hobbyRepository = hobbyRepository;
+        private readonly IHobbyCategoryRepository _hobbyRepository = hobbyRepository;
         private readonly IMapper _mapper = mapper;
 
         [HttpGet]
         public async Task<ActionResult<ApiResponse>> GetListHobby()
         {
             var hobbies = await _hobbyRepository.GetListAsync();
-            var hobbiesResponse = _mapper.Map<List<HobbyResponse>>(hobbies);
+            var hobbiesResponse = _mapper.Map<List<HobbyCategoryResponse>>(hobbies);
             var response = new ApiResponse(hobbiesResponse).GetResult(200, "Sucessful");
             return response;
         }

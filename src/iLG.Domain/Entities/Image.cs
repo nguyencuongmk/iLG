@@ -1,4 +1,5 @@
 ﻿using iLG.Domain.Abstractions;
+using iLG.Domain.Enums;
 
 namespace iLG.Domain.Entities
 {
@@ -10,6 +11,6 @@ namespace iLG.Domain.Entities
 
         public string? Path { get; set; }
 
-        public string? Type { get; set; }
+        public ImageType? Type { get; set; }
     }
 }

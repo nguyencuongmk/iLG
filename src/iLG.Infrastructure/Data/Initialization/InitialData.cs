@@ -6,175 +6,192 @@ namespace iLG.Infrastructure.Data.Initialization
 {
     public class InitialData
     {
-        public static IEnumerable<Hobby> Hobbies =>
+        public static IEnumerable<HobbyCategory> HobbyCategories =>
         [
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Traveling"
             },
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Painting"
             },
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Film"
             },
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Music"
             },
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Sport"
             },
-            new Hobby
+            new HobbyCategory
             {
                 Title = "Cuisine"
             }
         ];
 
-        public static IEnumerable<HobbyDetail> HobbyDetails =>
+        public static IEnumerable<Hobby> Hobbies =>
         [
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Traveling alone",
-                HobbyId = 1
+                HobbyCategoryId = 1
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Traveling with family",
-                HobbyId = 1
+                HobbyCategoryId = 1
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Lanscape painting",
-                HobbyId = 2
+                HobbyCategoryId = 2
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Portrait painting",
-                HobbyId = 2
+                HobbyCategoryId = 2
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Painting still lifes",
-                HobbyId = 2
+                HobbyCategoryId = 2
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Mavel",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Korea film",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Vietnam film",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "TV series",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Movie theaters",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Horror film",
-                HobbyId = 3
+                HobbyCategoryId = 3
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "K-POP",
-                HobbyId = 4
+                HobbyCategoryId = 4
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "V-POP",
-                HobbyId = 4
+                HobbyCategoryId = 4
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "US-UK",
-                HobbyId = 4
+                HobbyCategoryId = 4
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "C-POP",
-                HobbyId = 4
+                HobbyCategoryId = 4
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Football",
-                HobbyId = 5
+                HobbyCategoryId = 5
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Basketball",
-                HobbyId = 5
+                HobbyCategoryId = 5
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Athletics",
-                HobbyId = 5
+                HobbyCategoryId = 5
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Chess",
-                HobbyId = 5
+                HobbyCategoryId = 5
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Tenis",
-                HobbyId = 5
+                HobbyCategoryId = 5
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Tokbokki",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Pho",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Bread",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Banchan",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Kimchi",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Bulgogi",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
-            new HobbyDetail
+            new Hobby
             {
                 Name = "Snacks",
-                HobbyId = 6
+                HobbyCategoryId = 6
             },
         ];
 
         public static IEnumerable<Permission> Permissions =>
         [
+            new Permission
+            {
+                Name = "HobbyCategory.Add"
+            },
+            new Permission
+            {
+                Name = "HobbyCategory.View"
+            },
+            new Permission
+            {
+                Name = "HobbyCategory.Modify"
+
+            },
+            new Permission
+            {
+                Name = "HobbyCategory.Remove"
+            },
             new Permission
             {
                 Name = "Hobby.Add"
@@ -186,27 +203,10 @@ namespace iLG.Infrastructure.Data.Initialization
             new Permission
             {
                 Name = "Hobby.Modify"
-                
             },
             new Permission
             {
                 Name = "Hobby.Remove"
-            },
-            new Permission
-            {
-                Name = "HobbyDetail.Add"
-            },
-            new Permission
-            {
-                Name = "HobbyDetail.View"
-            },
-            new Permission
-            {
-                Name = "HobbyDetail.Modify"
-            },
-            new Permission
-            {
-                Name = "HobbyDetail.Remove"
             },
             new Permission
             {
@@ -325,12 +325,12 @@ namespace iLG.Infrastructure.Data.Initialization
             }
         ];
 
-        public static IEnumerable<UserInfoHobbyDetail> UserInfoHobbyDetails =>
+        public static IEnumerable<UserInfoHobby> UserInfoHobby =>
         [
-            new UserInfoHobbyDetail
+            new UserInfoHobby
             {
                 UserInfoId = 1,
-                HobbyDetailId = 1
+                HobbyId = 1
             }
         ];
 
@@ -349,7 +349,7 @@ namespace iLG.Infrastructure.Data.Initialization
             {
                 UserInfoId = 1,
                 Path = "https://png.pngtree.com/element_our/20190604/ourmid/pngtree-user-avatar-boy-image_1482937.jpg",
-                Type = "Avatar"
+                Type = ImageType.Avatar
             }
         ];
     }

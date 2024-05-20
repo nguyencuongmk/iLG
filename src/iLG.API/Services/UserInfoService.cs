@@ -77,7 +77,7 @@ namespace iLG.API.Services
 
             if (userInfos.Any())
             {
-                userSuitables = userInfos.Where(ui => ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Any()).Select(ui => new UserSuitableResponse
+                userSuitables = userInfos.Where(ui => ui.Hobbies.Intersect(userInfo.Hobbies).Any()).Select(ui => new UserSuitableResponse
                 {
                     UserId = ui.UserId,
                     FullName = ui.FullName,
@@ -89,8 +89,8 @@ namespace iLG.API.Services
                     Zodiac = ui.Zodiac.ToString(),
                     Biography = ui.Biography,
                     Images = _mapper.Map<List<ImageResponse>>(ui.Images),
-                    HobbyDetails = _mapper.Map<List<HobbyDetailResponse>>(ui.HobbyDetails),
-                    SameHobbies = ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Select(x => x.Name).ToList()
+                    Hobbies = _mapper.Map<List<HobbyResponse>>(ui.Hobbies),
+                    SameHobbies = ui.Hobbies.Intersect(userInfo.Hobbies).Select(x => x.Name).ToList()
                 }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
             }
 
