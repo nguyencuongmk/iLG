@@ -2,12 +2,14 @@
 using iLG.API.Extensions;
 using iLG.API.Models.Responses;
 using iLG.Infrastructure.Repositories.Abstractions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace iLG.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class HobbyController(IHobbyRepository hobbyRepository, IMapper mapper) : ControllerBase
     {
         private readonly IHobbyRepository _hobbyRepository = hobbyRepository;

@@ -13,17 +13,52 @@ namespace iLG.API.Services
         private readonly IUserInfoRepository _userInfoRepository = userInfoRepository;
         private readonly IMapper _mapper = mapper;
 
+        /// <summary>
+        /// Get user info by ID
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public async Task<(UserInfoResponse, string)> GetUserInfo(int id)
+        {   
+            string message = string.Empty;
+            var userInfo = await _userInfoRepository.GetAsync(expression: ui => ui.UserId == id);
+            var userInfoResponse = new UserInfoResponse();
+
+            if (userInfo is null)
+                message = Message.Error.UserInfo.NOT_EXISTS;
+            else
+                userInfoResponse = _mapper.Map<UserInfoResponse>(userInfo);
+
+            return (userInfoResponse, message);
+        }
+
+        /// <summary>
+        /// Search suitable user
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <param name="minAge"></param>
+        /// <param name="maxAge"></param>
+        /// <param name="gender"></param>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <returns></returns>
         public async Task<(List<UserSuitableResponse>, string)> SearchSuitableUser(int userId, int minAge, int maxAge, string gender, int pageIndex, int pageSize)
         {
             #region Verify Request
 
             var message = string.Empty;
-            var searchResponse = new List<UserSuitableResponse>();
+            var userSuitables = new List<UserSuitableResponse>();
 
             if (string.IsNullOrEmpty(gender))
             {
                 message = Message.Error.User.NOT_ENOUGH_INFO;
-                return (searchResponse, message);
+                return (userSuitables, message);
+            }
+
+            if (pageIndex < 1 || pageSize < 0)
+            {
+                message = Message.Error.Paging.INVALID_PAGING;
+                return (userSuitables, message);
             }
 
             var userInfo = await _userInfoRepository.GetAsync(ui => ui.UserId == userId);
@@ -31,7 +66,7 @@ namespace iLG.API.Services
             if (userInfo is null)
             {
                 message = Message.Error.User.NOT_EXISTS_USER;
-                return (searchResponse, message);
+                return (userSuitables, message);
             }
 
             #endregion Verify Request
@@ -40,23 +75,29 @@ namespace iLG.API.Services
 
             var userInfos = await _userInfoRepository.GetListAsync(expression: ui => ui.Age >= minAge && ui.Age <= maxAge && ui.Gender == gender.ToEnum<Gender>() && ui.UserId != userId);
 
-            var userSuitables = userInfos.Where(ui => ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Any()).Select(ui => new UserSuitableResponse
-                    {
-                        FullName = ui.FullName,
-                        Age = ui.Age,
-                        Gender = ui.Gender.ToString(),
-                        Nickname = ui.Nickname,
-                        PhoneNumber = ui.PhoneNumber,
-                        RelationshipStatus = ui.RelationshipStatus,
-                        Zodiac = ui.Zodiac,
-                        Biography = ui.Biography,
-                        Images = _mapper.Map<List<ImageResponse>>(ui.Images),
-                        SameHobbies = ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Select(x => x.Name).ToList()
-                    }).ToList();
+            if (userInfos.Any())
+            {
+                userSuitables = userInfos.Where(ui => ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Any()).Select(ui => new UserSuitableResponse
+                {
+                    UserId = ui.UserId,
+                    FullName = ui.FullName,
+                    Age = ui.Age,
+                    Gender = ui.Gender.ToString(),
+                    Nickname = ui.Nickname,
+                    PhoneNumber = ui.PhoneNumber,
+                    RelationshipStatus = ui.RelationshipStatus,
+                    Zodiac = ui.Zodiac.ToString(),
+                    Biography = ui.Biography,
+                    Images = _mapper.Map<List<ImageResponse>>(ui.Images),
+                    HobbyDetails = _mapper.Map<List<HobbyDetailResponse>>(ui.HobbyDetails),
+                    SameHobbies = ui.HobbyDetails.Intersect(userInfo.HobbyDetails).Select(x => x.Name).ToList()
+                }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+            }
 
-            return userSuitables.Count != 0 ? (userSuitables, message) : (searchResponse, message);
+            return (userSuitables, message);
 
-            #endregion Business Logic       
+            #endregion Business Logic
+
         }
     }
 }

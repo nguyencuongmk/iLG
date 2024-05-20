@@ -9,8 +9,9 @@ namespace iLG.API.Maps
         public Mapper()
         {
             CreateMap<Hobby, HobbyResponse>();
-            CreateMap<HobbyDetail, HobbyResponse.HobbyDetailResponse>();
+            CreateMap<HobbyDetail, HobbyDetailResponse>();
             CreateMap<Image, ImageResponse>().ReverseMap();
+            CreateMap<UserInfo, UserInfoResponse>().ReverseMap();
         }
     }
 }

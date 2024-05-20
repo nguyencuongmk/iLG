@@ -23,6 +23,11 @@
                 public const string EMAIL_ERROR = "Send email error";
             }
 
+            public static class Paging
+            {
+                public const string INVALID_PAGING = "Invalid pageIndex or pageSize";
+            }
+
             public static class User
             {
                 public const string LOGIN_FAILED = "Email or Password is invalid";
@@ -35,6 +40,11 @@
                 public const string INVALID_OTP = "Invalid OTP";
                 public const string NOT_ENOUGH_INFO = "Not enough information. Please fill all the required fields";
                 public const string NOT_AUTH = "Account has not been authenticated";
+            }
+
+            public static class UserInfo
+            {
+                public const string NOT_EXISTS = "User Information is not exists";
             }
         }
     }
