@@ -4,14 +4,14 @@
     {
         public static class Success
         {
-            public static class User
+            public static class Account
             {
-                public const string LOGGED_IN = "Account has been logged in";
-                public const string LOGGED_OUT = "Account has been logged out";
-                public const string ACC_ACTIVATED = "Account has been activated";
+                public const string SIGNED_IN = "Account has been signed in";
+                public const string SIGNED_OUT = "Account has been signed out";
+                public const string SIGNED_UP = "Account has been signed up";
                 public const string PW_CHANGED = "Password has been changed";
                 public const string NEW_PASSWORD = "New password has been sent via email";
-                public const string NEW_OTP = "New OTP code has been sent via email";
+                public const string OTP = "OTP code has been sent via email";
             }
         }
 
@@ -28,18 +28,21 @@
                 public const string INVALID_PAGING = "Invalid pageIndex or pageSize";
             }
 
-            public static class User
+            public static class Account
             {
-                public const string LOGIN_FAILED = "Email or Password is invalid";
-                public const string INVALID_EMAIL = "Email is invalid";
+                public const string LOGIN_FAILED = "Invalid email or password";
+                public const string INVALID_EMAIL = "Invalid email";
+                public const string INVALID_PASSWORD = "Invalid password";
                 public const string EXISTS_EMAIL = "Email already exists";
                 public const string NOT_EXISTS_USER = "User is not exists";
                 public const string ACCOUNT_LOCKED = "Account is locked";
                 public const string EMAIL_NOT_YET_CONFIRMED = "Account has not been confirmed by email";
                 public const string INVALID_TOKEN = "Invalid token";
-                public const string INVALID_OTP = "Invalid OTP";
                 public const string NOT_ENOUGH_INFO = "Not enough information. Please fill all the required fields";
                 public const string NOT_AUTH = "Account has not been authenticated";
+                public const string INVALID_OTP = "Invalid OTP";
+                public const string EXPIRED_OTP = "OTP has expired. Please send a new request";
+                public const string CACHE_OTP = "You have just sent a request to receive an OTP code. Please wait 2 minutes to send the next request";
             }
 
             public static class UserInfo

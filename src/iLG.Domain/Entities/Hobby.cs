@@ -4,7 +4,7 @@ namespace iLG.Domain.Entities
 {
     public class Hobby : Entity<int>
     {
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
         public int HobbyCategoryId { get; set; }
 

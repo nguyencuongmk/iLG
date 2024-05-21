@@ -35,7 +35,7 @@ namespace iLG.API.Controllers
             {
                 response.Errors.Add(new Error
                 {
-                    ErrorMessage = Message.Error.User.NOT_AUTH
+                    ErrorMessage = Message.Error.Account.NOT_AUTH
                 });
 
                 var result = response.GetResult(StatusCodes.Status400BadRequest);

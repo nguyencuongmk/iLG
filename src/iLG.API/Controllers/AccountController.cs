@@ -45,7 +45,7 @@ namespace iLG.API.Controllers
 
             response.Data = loginResponse.Item1;
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.LOGGED_IN);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_IN);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace iLG.API.Controllers
             {
                 response.Errors.Add(new Error
                 {
-                    ErrorMessage = Message.Error.User.NOT_AUTH
+                    ErrorMessage = Message.Error.Account.NOT_AUTH
                 });
 
                 var result = response.GetResult(StatusCodes.Status400BadRequest);
@@ -90,7 +90,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.LOGGED_OUT);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_OUT);
         }
 
         /// <summary>
@@ -120,21 +120,14 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            await _emailService.SendActivationEmail(request.Email);
-
-            return response.GetResult(StatusCodes.Status200OK);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_UP);
         }
 
-        /// <summary>
-        /// Account activation
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPatch("activation")]
-        public async Task<ActionResult<ApiResponse>> Activation([FromBody] ActivationRequest request)
+        [HttpGet("otp")]
+        public async Task<ActionResult<ApiResponse>> SendOtpEmail([FromQuery] string email)
         {
             var response = new ApiResponse();
-            var errorMessage = await _userService.Activation(request);
+            var errorMessage = await _emailService.SendOtpEmail(email);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -143,41 +136,11 @@ namespace iLG.API.Controllers
                     ErrorMessage = errorMessage
                 });
 
-                if (errorMessage == Message.Error.Common.SERVER_ERROR)
-                {
-                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
-                }
-
                 var result = response.GetResult(StatusCodes.Status400BadRequest);
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.ACC_ACTIVATED);
-        }
-
-        /// <summary>
-        /// Resend OTP
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [HttpPatch("resend-otp")]
-        public async Task<ActionResult<ApiResponse>> Resend([FromBody] ResendOtpRequest request)
-        {
-            var response = new ApiResponse();
-            var isSent = await _emailService.SendActivationEmail(request.Email, true);
-
-            if (!isSent)
-            {
-                response.Errors.Add(new Error
-                {
-                    ErrorMessage = Message.Error.Common.EMAIL_ERROR
-                });
-
-                var result = response.GetResult(StatusCodes.Status400BadRequest);
-                return BadRequest(result);
-            }
-
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.NEW_OTP);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.OTP);
         }
 
         /// <summary>
@@ -196,7 +159,7 @@ namespace iLG.API.Controllers
             {
                 response.Errors.Add(new Error
                 {
-                    ErrorMessage = Message.Error.User.NOT_AUTH
+                    ErrorMessage = Message.Error.Account.NOT_AUTH
                 });
 
                 var result = response.GetResult(StatusCodes.Status400BadRequest);
@@ -222,7 +185,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.PW_CHANGED);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.PW_CHANGED);
         }
 
         /// <summary>
@@ -254,7 +217,7 @@ namespace iLG.API.Controllers
 
             await _emailService.SendNewPasswordEmail(request.Email, forgotPassword.Item1);
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.NEW_PASSWORD);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.NEW_PASSWORD);
         }
     }
 }

@@ -21,6 +21,9 @@ namespace iLG.Infrastructure.Data.Initialization
             await SeedPermissionAsync(context);
             await SeedRoleAsync(context);
             await SeedRolePermissionAsync(context);
+            await SeedRelationshipAsync(context);
+            await SeedCompanyAsync(context);
+            await SeedJobAsync(context);
             await SeedUserAsync(context);
             await SeedUserInfoAsync(context);
             await SeedUserInfoHobbyAsync(context);
@@ -114,6 +117,33 @@ namespace iLG.Infrastructure.Data.Initialization
             if (!await context.Images.AnyAsync())
             {
                 await context.Images.AddRangeAsync(InitialData.Images);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedRelationshipAsync(ILGDbContext context)
+        {
+            if (!await context.Relationships.AnyAsync())
+            {
+                await context.Relationships.AddRangeAsync(InitialData.Relationships);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedCompanyAsync(ILGDbContext context)
+        {
+            if (!await context.Companies.AnyAsync())
+            {
+                await context.Companies.AddRangeAsync(InitialData.Companies);
+                await context.SaveChangesAsync();
+            }
+        }
+
+        private static async Task SeedJobAsync(ILGDbContext context)
+        {
+            if (!await context.Jobs.AnyAsync())
+            {
+                await context.Jobs.AddRangeAsync(InitialData.Jobs);
                 await context.SaveChangesAsync();
             }
         }

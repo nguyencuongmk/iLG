@@ -1,63 +1,51 @@
-﻿using iLG.API.Helpers;
+﻿using iLG.API.Constants;
+using iLG.API.Helpers;
 using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Infrastructure.Repositories.Abstractions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
 
 namespace iLG.API.Services
 {
-    public class EmailService(IOptions<AppSettings> options, IUserRepository userRepository) : IEmailService
+    public class EmailService(IOptions<AppSettings> options, IUserRepository userRepository, IDistributedCache cache) : IEmailService
     {
         private readonly AppSettings _appSettings = options.Value;
         private readonly IUserRepository _userRepository = userRepository;
+        private readonly IDistributedCache _cache = cache;
 
-        /// <summary>
-        /// Request to Activate User Account
-        /// </summary>
-        /// <param name="email"></param>
-        /// <param name="isResend"></param>
-        /// <returns></returns>
-        public async Task<bool> SendActivationEmail(string email, bool isResend = false)
+        public async Task<string> SendOtpEmail(string email)
         {
             if (string.IsNullOrEmpty(email))
-                return false;
+                return Message.Error.Account.NOT_ENOUGH_INFO;
 
-            if (!EmailHelper.IsValidEmail(email))
-                return false;
+            if(!EmailHelper.IsValidEmail(email))
+                return Message.Error.Account.INVALID_EMAIL;
 
-            if (!await _userRepository.IsExistAsync(expression: u => u.Email == email))
-                return false;
+            if (await _userRepository.IsExistAsync(expression: u => u.Email == email))
+                return Message.Error.Account.EXISTS_EMAIL;
 
-            var user = await _userRepository.GetAsync(expression: u => u.Email == email);
+            var cacheOtp = await _cache.GetStringAsync(email);
 
-            if (user is null)
-                return false;
+            if (!string.IsNullOrEmpty(cacheOtp))
+                return Message.Error.Account.CACHE_OTP;
 
-            if (isResend)
+            var otp = OtpHelper.GenerateOTP();
+
+            await _cache.SetStringAsync(email, otp, new DistributedCacheEntryOptions
             {
-                if (DateTime.UtcNow < user.OtpExpiredTime)
-                    return false;
+                AbsoluteExpiration = DateTimeOffset.UtcNow.Add(TimeSpan.FromMinutes(2))
+            });
 
-                user.Otp = OtpHelper.GenerateOTP();
-                user.OtpExpiredTime = DateTime.UtcNow.AddMinutes(2);
-                await _userRepository.UpdateAsync(user);
-            }
-
-            var otp = user?.Otp;
-
-            if (string.IsNullOrEmpty(otp))
-                return false;
-
-            var subject = "Account Activation";
-            var body = $@"<p>Hi {user?.UserInfo.FullName},</p>
-                                <p>The OTP code to activate your account is: <b>{otp}</b></p>
+            var subject = "Sign up OTP code";
+            var body = $@"<p>The OTP code to sign up is: <b>{otp}</b></p>
                                 <p>Best Regard,</p>
                                 <p>iLG Support</p>";
 
             await Send(_appSettings.MailSettings.MailServerUsername, _appSettings.MailSettings.MailServerPassword, [email], [], subject, body);
-            return true;
+            return string.Empty;
         }
 
         public async Task<bool> SendNewPasswordEmail(string email, string password)

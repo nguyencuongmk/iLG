@@ -12,7 +12,7 @@ namespace iLG.Infrastructure.Repositories
             if (user == null || string.IsNullOrEmpty(requestPassword))
                 return false;
 
-            return PasswordHasher.VerifyPassword(requestPassword, user.PasswordHash);
+            return PasswordHelper.VerifyPassword(requestPassword, user.PasswordHash);
         }
 
         public List<string?> GetRoles(User user)

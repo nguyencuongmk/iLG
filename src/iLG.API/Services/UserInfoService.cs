@@ -51,7 +51,7 @@ namespace iLG.API.Services
 
             if (string.IsNullOrEmpty(gender))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return (userSuitables, message);
             }
 
@@ -65,7 +65,7 @@ namespace iLG.API.Services
 
             if (userInfo is null)
             {
-                message = Message.Error.User.NOT_EXISTS_USER;
+                message = Message.Error.Account.NOT_EXISTS_USER;
                 return (userSuitables, message);
             }
 
@@ -73,7 +73,7 @@ namespace iLG.API.Services
 
             #region Business Logic
 
-            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => ui.Age >= minAge && ui.Age <= maxAge && ui.Gender == gender.ToEnum<Gender>() && ui.UserId != userId);
+            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => DateTime.UtcNow.Year - ui.DateOfBirth.Year >= minAge && DateTime.UtcNow.Year - ui.DateOfBirth.Year <= maxAge && ui.Gender == gender.ToEnum<Gender>() && ui.UserId != userId);
 
             if (userInfos.Any())
             {
@@ -81,11 +81,10 @@ namespace iLG.API.Services
                 {
                     UserId = ui.UserId,
                     FullName = ui.FullName,
-                    Age = ui.Age,
+                    Age = DateTime.UtcNow.Year - ui.DateOfBirth.Year,
                     Gender = ui.Gender.ToString(),
                     Nickname = ui.Nickname,
                     PhoneNumber = ui.PhoneNumber,
-                    RelationshipStatus = ui.RelationshipStatus,
                     Zodiac = ui.Zodiac.ToString(),
                     Biography = ui.Biography,
                     Images = _mapper.Map<List<ImageResponse>>(ui.Images),

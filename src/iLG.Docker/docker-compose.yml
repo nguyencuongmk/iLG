@@ -6,6 +6,9 @@ services:
 
   ilgdb:
     image: mcr.microsoft.com/mssql/server
+ 
+  ilgcache:
+    image: redis
 
   ilg.api:
     image: ${DOCKER_REGISTRY-}ilgapi

@@ -17,6 +17,12 @@ services:
     ports:
       - "1433:1433"
 
+  ilgcache:
+    container_name: ilgcache
+    restart: always
+    ports:
+      - "6379:6379"
+
   ilg.api:
     env_file:
       - ./environment/ilgapi/.env.Development

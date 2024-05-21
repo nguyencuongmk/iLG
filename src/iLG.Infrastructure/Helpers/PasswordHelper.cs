@@ -1,9 +1,10 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace iLG.Infrastructure.Helpers
 {
-    public static class PasswordHasher
+    public static class PasswordHelper
     {
         private const int SaltSize = 16;
         private const int HashSize = 32;
@@ -42,6 +43,9 @@ namespace iLG.Infrastructure.Helpers
 
             return true;
         }
+
+        public static bool IsValidPassword(string password) => Regex.IsMatch(password, @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$");
+
 
         private static byte[] GenerateSalt()
         {

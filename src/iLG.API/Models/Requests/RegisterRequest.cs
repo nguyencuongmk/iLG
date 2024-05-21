@@ -10,13 +10,7 @@ namespace iLG.API.Models.Requests
         [JsonProperty("password")]
         public string Password { get; set; }
 
-        [JsonProperty("fullName")]
-        public string FullName { get; set; }
-
-        [JsonProperty("age")]
-        public int Age { get; set; }
-
-        [JsonProperty("gender")]
-        public string Gender { get; set; }
+        [JsonProperty("otp")]
+        public string Otp { get; set; }
     }
 }

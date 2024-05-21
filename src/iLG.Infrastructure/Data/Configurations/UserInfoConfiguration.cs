@@ -11,7 +11,8 @@ namespace iLG.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<UserInfo> builder)
         {
             builder.HasKey(ui => ui.Id);
-            builder.Property(ui => ui.FullName).HasMaxLength(255).IsRequired();
+            builder.HasIndex(ui => ui.UserId).IsUnique();
+            builder.Property(ui => ui.FullName).HasMaxLength(255);
             builder.Property(ui => ui.Gender).HasConversion(g => g.ToString(), dbGender => dbGender.ToEnum<Gender>());
             builder.Property(ui => ui.Zodiac).HasConversion(z => z.ToString(), dbZodiac => dbZodiac.ToEnum<Zodiac>());
 

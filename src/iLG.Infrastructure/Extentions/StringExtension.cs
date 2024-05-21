@@ -2,7 +2,7 @@
 {
     public static class StringExtension
     {
-        public static T ToEnum<T>(this string value) where T : struct
+        public static T ToEnum<T>(this string? value) where T : struct
         {
             ArgumentException.ThrowIfNullOrEmpty(value);
 

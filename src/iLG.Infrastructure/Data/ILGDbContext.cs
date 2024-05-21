@@ -15,6 +15,12 @@ namespace iLG.Infrastructure.Data
 
         public DbSet<Hobby> Hobbies => Set<Hobby>();
 
+        public DbSet<Relationship> Relationships => Set<Relationship>();
+
+        public DbSet<Company> Companies => Set<Company>();
+
+        public DbSet<Job> Jobs => Set<Job>();
+
         public DbSet<Image> Images => Set<Image>();
 
         public DbSet<Permission> Permissions => Set<Permission>();
