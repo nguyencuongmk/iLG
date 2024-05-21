@@ -32,7 +32,7 @@ namespace iLG.Infrastructure.IoC
             services.AddScoped<IUserTokenRepository, UserTokenRepository>();
             services.AddScoped<IUserInfoRepository, UserInfoRepository>();
 
-            //MongoDB
+            // MongoDB
             services.AddSingleton(provider =>
             {
                 var connectionString = configuration["MongoDb:Connection"];
@@ -56,6 +56,12 @@ namespace iLG.Infrastructure.IoC
                 {
                     return provider.GetRequiredService<IMongoCollection<LogEntry>>();
                 });
+            });
+
+            // Redis Cache
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
             });
 
             return services;
