@@ -12,7 +12,7 @@ using iLG.Infrastructure.Data;
 namespace iLG.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ILGDbContext))]
-    [Migration("20240519102554_InitialDb")]
+    [Migration("20240520152250_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -45,43 +45,7 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("IsDeleted")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UpdatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Hobbies");
-                });
-
-            modelBuilder.Entity("iLG.Domain.Entities.HobbyDetail", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime?>("CreatedAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("CreatedBy")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("HobbyId")
+                    b.Property<int>("HobbyCategoryId")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")
@@ -100,9 +64,45 @@ namespace iLG.Infrastructure.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HobbyId");
+                    b.HasIndex("HobbyCategoryId");
 
-                    b.ToTable("HobbyDetails");
+                    b.ToTable("Hobbies");
+                });
+
+            modelBuilder.Entity("iLG.Domain.Entities.HobbyCategory", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("HobbyCategories");
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.Image", b =>
@@ -373,12 +373,12 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.ToTable("UserInfos");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobbyDetail", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobby", b =>
                 {
                     b.Property<int>("UserInfoId")
                         .HasColumnType("int");
 
-                    b.Property<int>("HobbyDetailId")
+                    b.Property<int>("HobbyId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
@@ -399,11 +399,11 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Property<string>("UpdatedBy")
                         .HasColumnType("nvarchar(max)");
 
-                    b.HasKey("UserInfoId", "HobbyDetailId");
+                    b.HasKey("UserInfoId", "HobbyId");
 
-                    b.HasIndex("HobbyDetailId");
+                    b.HasIndex("HobbyId");
 
-                    b.ToTable("UserInfoHobbyDetails", (string)null);
+                    b.ToTable("UserInfoHobbies", (string)null);
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.UserMatch", b =>
@@ -529,15 +529,15 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.ToTable("UserTokens");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.HobbyDetail", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.Hobby", b =>
                 {
-                    b.HasOne("iLG.Domain.Entities.Hobby", "Hobby")
-                        .WithMany("HobbyDetails")
-                        .HasForeignKey("HobbyId")
+                    b.HasOne("iLG.Domain.Entities.HobbyCategory", "HobbyCategory")
+                        .WithMany("Hobbies")
+                        .HasForeignKey("HobbyCategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Hobby");
+                    b.Navigation("HobbyCategory");
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.Image", b =>
@@ -581,11 +581,11 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobbyDetail", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.UserInfoHobby", b =>
                 {
-                    b.HasOne("iLG.Domain.Entities.HobbyDetail", "HobbyDetail")
+                    b.HasOne("iLG.Domain.Entities.Hobby", "Hobby")
                         .WithMany()
-                        .HasForeignKey("HobbyDetailId")
+                        .HasForeignKey("HobbyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -595,7 +595,7 @@ namespace iLG.Infrastructure.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HobbyDetail");
+                    b.Navigation("Hobby");
 
                     b.Navigation("UserInfo");
                 });
@@ -641,9 +641,9 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("iLG.Domain.Entities.Hobby", b =>
+            modelBuilder.Entity("iLG.Domain.Entities.HobbyCategory", b =>
                 {
-                    b.Navigation("HobbyDetails");
+                    b.Navigation("Hobbies");
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.User", b =>

@@ -12,7 +12,7 @@ namespace iLG.Infrastructure.Data.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Hobbies",
+                name: "HobbyCategories",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -27,7 +27,7 @@ namespace iLG.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Hobbies", x => x.Id);
+                    table.PrimaryKey("PK_HobbyCategories", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -94,13 +94,13 @@ namespace iLG.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "HobbyDetails",
+                name: "Hobbies",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(255)", maxLength: 255, nullable: false),
-                    HobbyId = table.Column<int>(type: "int", nullable: false),
+                    HobbyCategoryId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -110,11 +110,11 @@ namespace iLG.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_HobbyDetails", x => x.Id);
+                    table.PrimaryKey("PK_Hobbies", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_HobbyDetails_Hobbies_HobbyId",
-                        column: x => x.HobbyId,
-                        principalTable: "Hobbies",
+                        name: "FK_Hobbies_HobbyCategories_HobbyCategoryId",
+                        column: x => x.HobbyCategoryId,
+                        principalTable: "HobbyCategories",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -269,11 +269,11 @@ namespace iLG.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInfoHobbyDetails",
+                name: "UserInfoHobbies",
                 columns: table => new
                 {
                     UserInfoId = table.Column<int>(type: "int", nullable: false),
-                    HobbyDetailId = table.Column<int>(type: "int", nullable: false),
+                    HobbyId = table.Column<int>(type: "int", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
                     UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
@@ -283,15 +283,15 @@ namespace iLG.Infrastructure.Data.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInfoHobbyDetails", x => new { x.UserInfoId, x.HobbyDetailId });
+                    table.PrimaryKey("PK_UserInfoHobbies", x => new { x.UserInfoId, x.HobbyId });
                     table.ForeignKey(
-                        name: "FK_UserInfoHobbyDetails_HobbyDetails_HobbyDetailId",
-                        column: x => x.HobbyDetailId,
-                        principalTable: "HobbyDetails",
+                        name: "FK_UserInfoHobbies_Hobbies_HobbyId",
+                        column: x => x.HobbyId,
+                        principalTable: "Hobbies",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserInfoHobbyDetails_UserInfos_UserInfoId",
+                        name: "FK_UserInfoHobbies_UserInfos_UserInfoId",
                         column: x => x.UserInfoId,
                         principalTable: "UserInfos",
                         principalColumn: "Id",
@@ -325,9 +325,9 @@ namespace iLG.Infrastructure.Data.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_HobbyDetails_HobbyId",
-                table: "HobbyDetails",
-                column: "HobbyId");
+                name: "IX_Hobbies_HobbyCategoryId",
+                table: "Hobbies",
+                column: "HobbyCategoryId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Images_UserInfoId",
@@ -340,9 +340,9 @@ namespace iLG.Infrastructure.Data.Migrations
                 column: "PermissionId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInfoHobbyDetails_HobbyDetailId",
-                table: "UserInfoHobbyDetails",
-                column: "HobbyDetailId");
+                name: "IX_UserInfoHobbies_HobbyId",
+                table: "UserInfoHobbies",
+                column: "HobbyId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserInfos_UserId",
@@ -376,7 +376,7 @@ namespace iLG.Infrastructure.Data.Migrations
                 name: "RolePermissions");
 
             migrationBuilder.DropTable(
-                name: "UserInfoHobbyDetails");
+                name: "UserInfoHobbies");
 
             migrationBuilder.DropTable(
                 name: "UserMatches");
@@ -391,7 +391,7 @@ namespace iLG.Infrastructure.Data.Migrations
                 name: "Permissions");
 
             migrationBuilder.DropTable(
-                name: "HobbyDetails");
+                name: "Hobbies");
 
             migrationBuilder.DropTable(
                 name: "UserInfos");
@@ -400,7 +400,7 @@ namespace iLG.Infrastructure.Data.Migrations
                 name: "Roles");
 
             migrationBuilder.DropTable(
-                name: "Hobbies");
+                name: "HobbyCategories");
 
             migrationBuilder.DropTable(
                 name: "Users");

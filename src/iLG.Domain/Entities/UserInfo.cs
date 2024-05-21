@@ -29,6 +29,6 @@ namespace iLG.Domain.Entities
 
         public virtual List<Image> Images { get; set; } = [];
 
-        public virtual List<HobbyDetail> HobbyDetails { get; set; } = [];
+        public virtual List<Hobby> Hobbies { get; set; } = [];
     }
 }

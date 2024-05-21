@@ -4,7 +4,7 @@ using iLG.Infrastructure.Repositories.Abstractions;
 
 namespace iLG.Infrastructure.Repositories
 {
-    public class HobbyDetailRepository(ILGDbContext context) : Repository<HobbyDetail>(context), IHobbyDetailRepository
+    public class HobbyCategoryRepository(ILGDbContext context) : Repository<HobbyCategory>(context), IHobbyCategoryRepository
     {
     }
 }

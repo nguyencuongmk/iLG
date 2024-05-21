@@ -8,8 +8,8 @@ namespace iLG.API.Maps
     {
         public Mapper()
         {
-            CreateMap<Hobby, HobbyResponse>();
-            CreateMap<HobbyDetail, HobbyDetailResponse>();
+            CreateMap<HobbyCategory, HobbyCategoryResponse>().ReverseMap();
+            CreateMap<Hobby, HobbyResponse>().ReverseMap();
             CreateMap<Image, ImageResponse>().ReverseMap();
             CreateMap<UserInfo, UserInfoResponse>().ReverseMap();
         }

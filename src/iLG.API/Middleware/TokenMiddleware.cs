@@ -40,7 +40,7 @@ namespace iLG.API.Middleware
                         ErrorMessage = Message.Error.User.INVALID_TOKEN
                     });
 
-                    var result = response.GetResult(401);
+                    var result = response.GetResult(StatusCodes.Status401Unauthorized);
                     context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     await context.Response.WriteAsJsonAsync(result);
                 }
@@ -49,6 +49,7 @@ namespace iLG.API.Middleware
                     var isValidToken = await userService.VerifyToken(token);
                     if (isValidToken)
                     {
+                        // Todo: Check Permission
                         await _next(context);
                     }
                     else
@@ -59,7 +60,7 @@ namespace iLG.API.Middleware
                             ErrorMessage = Message.Error.User.INVALID_TOKEN
                         });
 
-                        var result = response.GetResult(401);
+                        var result = response.GetResult(StatusCodes.Status401Unauthorized);
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         await context.Response.WriteAsJsonAsync(result);
                     }
