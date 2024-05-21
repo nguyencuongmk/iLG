@@ -8,14 +8,16 @@ using iLG.Domain.Enums;
 using iLG.Infrastructure.Extentions;
 using iLG.Infrastructure.Helpers;
 using iLG.Infrastructure.Repositories.Abstractions;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace iLG.API.Services
 {
-    public class UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository) : IUserService
+    public class UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository, IDistributedCache cache) : IUserService
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IUserTokenRepository _userTokenRepository = userTokenRepository;
         private readonly IRoleRepository _roleRepository = roleRepository;
+        private readonly IDistributedCache _cache = cache;
 
         /// <summary>
         /// Activate user account
@@ -30,13 +32,13 @@ namespace iLG.API.Services
 
             if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Otp))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return message;
             }
 
             if (!EmailHelper.IsValidEmail(request.Email))
             {
-                message = Message.Error.User.INVALID_EMAIL;
+                message = Message.Error.Account.INVALID_EMAIL;
                 return message;
             }
 
@@ -52,18 +54,18 @@ namespace iLG.API.Services
                 return message;
             }
 
-            if (user.EmailConfirmed)
-                return message;
+            //if (user.EmailConfirmed)
+            //    return message;
 
-            var isValidOtp = OtpHelper.VerifyOTP(request.Otp, user.Otp, user.OtpExpiredTime);
+            //var isValidOtp = OtpHelper.VerifyOTP(request.Otp, user.Otp, user.OtpExpiredTime);
 
-            if (!isValidOtp)
-            {
-                message = Message.Error.User.INVALID_OTP;
-                return message;
-            }
+            //if (!isValidOtp)
+            //{
+            //    message = Message.Error.User.INVALID_OTP;
+            //    return message;
+            //}
 
-            user.EmailConfirmed = true;
+            //user.EmailConfirmed = true;
             await _userRepository.UpdateAsync(user);
 
             return message;
@@ -84,13 +86,13 @@ namespace iLG.API.Services
 
             if (request == null || string.IsNullOrEmpty(email) || string.IsNullOrEmpty(request.OldPassword) || string.IsNullOrEmpty(request.NewPassword))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return message;
             }
 
             if (!EmailHelper.IsValidEmail(email))
             {
-                message = Message.Error.User.INVALID_EMAIL;
+                message = Message.Error.Account.INVALID_EMAIL;
                 return message;
             }
 
@@ -106,7 +108,7 @@ namespace iLG.API.Services
                 return message;
             }
 
-            var isValidPassword = PasswordHasher.VerifyPassword(request.OldPassword, user.PasswordHash);
+            var isValidPassword = PasswordHelper.VerifyPassword(request.OldPassword, user.PasswordHash);
 
             if (!isValidPassword)
             {
@@ -114,7 +116,7 @@ namespace iLG.API.Services
                 return message;
             }
 
-            user.PasswordHash = PasswordHasher.HashPassword(request.NewPassword);
+            user.PasswordHash = PasswordHelper.HashPassword(request.NewPassword);
             await _userRepository.UpdateAsync(user);
 
             return message;
@@ -135,13 +137,13 @@ namespace iLG.API.Services
 
             if (request == null || string.IsNullOrEmpty(request.Email))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return (string.Empty, message);
             }
 
             if (!EmailHelper.IsValidEmail(request.Email))
             {
-                message = Message.Error.User.INVALID_EMAIL;
+                message = Message.Error.Account.INVALID_EMAIL;
                 return (string.Empty, message);
             }
 
@@ -157,8 +159,8 @@ namespace iLG.API.Services
                 return (string.Empty, message);
             }
 
-            string newPassword = PasswordHasher.GenerateRandomPassword(10);
-            user.PasswordHash = PasswordHasher.HashPassword(newPassword);
+            string newPassword = PasswordHelper.GenerateRandomPassword(10);
+            user.PasswordHash = PasswordHelper.HashPassword(newPassword);
             await _userRepository.UpdateAsync(user);
 
             return (newPassword, message);
@@ -180,13 +182,13 @@ namespace iLG.API.Services
 
             if (request == null || string.IsNullOrEmpty(request.Email) || string.IsNullOrEmpty(request.Password))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return (response, message);
             }
 
             if (!EmailHelper.IsValidEmail(request.Email))
             {
-                message = Message.Error.User.INVALID_EMAIL;
+                message = Message.Error.Account.INVALID_EMAIL;
                 return (response, message);
             }
 
@@ -203,21 +205,21 @@ namespace iLG.API.Services
 
             if (user == null || !isValidPassword)
             {
-                message = Message.Error.User.LOGIN_FAILED;
+                message = Message.Error.Account.LOGIN_FAILED;
                 return (response, message);
             }
 
             if (user.IsLocked)
             {
-                message = Message.Error.User.ACCOUNT_LOCKED;
+                message = Message.Error.Account.ACCOUNT_LOCKED;
                 return (response, message);
             }
 
-            if (!user.EmailConfirmed)
-            {
-                message = Message.Error.User.EMAIL_NOT_YET_CONFIRMED;
-                return (response, message);
-            }
+            //if (!user.EmailConfirmed)
+            //{
+            //    message = Message.Error.User.EMAIL_NOT_YET_CONFIRMED;
+            //    return (response, message);
+            //}
 
             var userTokens = await _userTokenRepository.GetListAsync
             (
@@ -290,7 +292,7 @@ namespace iLG.API.Services
 
             if (string.IsNullOrEmpty(token))
             {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
+                message = Message.Error.Account.NOT_ENOUGH_INFO;
                 return message;
             }
 
@@ -323,25 +325,25 @@ namespace iLG.API.Services
         {
             #region Verify Request
 
-            var message = string.Empty;
-
-            if (request == null || string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password) || string.IsNullOrEmpty(request?.FullName) || string.IsNullOrEmpty(request?.Gender))
-            {
-                message = Message.Error.User.NOT_ENOUGH_INFO;
-                return message;
-            }
+            if (request == null || string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password) || string.IsNullOrEmpty(request?.Otp))
+                return Message.Error.Account.NOT_ENOUGH_INFO;
 
             if (!EmailHelper.IsValidEmail(request.Email))
-            {
-                message = Message.Error.User.INVALID_EMAIL;
-                return message;
-            }
+                return Message.Error.Account.INVALID_EMAIL;
 
             if (await _userRepository.IsExistAsync(expression: u => u.Email == request.Email))
-            {
-                message = Message.Error.User.EXISTS_EMAIL;
-                return message;
-            }
+                return Message.Error.Account.EXISTS_EMAIL;
+
+            var cacheOtp = await _cache.GetStringAsync(request.Email);
+
+            if (!PasswordHelper.IsValidPassword(request.Password))
+                return Message.Error.Account.INVALID_PASSWORD;
+
+            if (string.IsNullOrEmpty(cacheOtp))
+                return Message.Error.Account.EXPIRED_OTP;
+
+            if (request.Otp != cacheOtp)
+                return Message.Error.Account.INVALID_OTP;
 
             #endregion Verify Request
 
@@ -353,32 +355,21 @@ namespace iLG.API.Services
             );
 
             if (role is null)
-            {
-                message = Message.Error.Common.SERVER_ERROR;
-                return message;
-            }
+                return Message.Error.Common.SERVER_ERROR;
 
             var user = new User
             {
                 Email = request.Email,
-                PasswordHash = PasswordHasher.HashPassword(request.Password),
-                UserInfo = new UserInfo
-                {
-                    FullName = request.FullName,
-                    Age = request.Age,
-                    Gender = request.Gender.ToEnum<Gender>()
-                },
+                PasswordHash = PasswordHelper.HashPassword(request.Password),
                 Roles =
                 [
                     role
-                ],
-                Otp = OtpHelper.GenerateOTP(),
-                OtpExpiredTime = DateTime.UtcNow.AddMinutes(2),
+                ]
             };
 
             await _userRepository.CreateAsync(user);
 
-            return message;
+            return string.Empty;
 
             #endregion Business Logic
         }

@@ -4,9 +4,9 @@ namespace iLG.Domain.Entities
 {
     public class Role : Entity<int>
     {
-        public string? Name { get; set; }
+        public string Name { get; set; }
 
-        public string? Code { get; set; }
+        public string Code { get; set; }
 
         public virtual List<User> Users { get; set; } = [];
 

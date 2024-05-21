@@ -2,7 +2,7 @@
 {
     public interface IEmailService
     {
-        Task<bool> SendActivationEmail(string email, bool isResend = false);
+        Task<string> SendOtpEmail(string email);
 
         Task<bool> SendNewPasswordEmail(string email, string password);
     }

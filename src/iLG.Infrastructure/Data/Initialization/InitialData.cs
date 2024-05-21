@@ -186,7 +186,6 @@ namespace iLG.Infrastructure.Data.Initialization
             new Permission
             {
                 Name = "HobbyCategory.Modify"
-
             },
             new Permission
             {
@@ -296,7 +295,7 @@ namespace iLG.Infrastructure.Data.Initialization
 
                 for (int i = 1; i <= Permissions.Count(); i++)
                 {
-                    RolePermission permission = new() { RoleId = 1, PermissionId = i,  };
+                    RolePermission permission = new() { RoleId = 1, PermissionId = i, };
                     permissions.Add(permission);
                 }
 
@@ -309,8 +308,7 @@ namespace iLG.Infrastructure.Data.Initialization
             new User
             {
                 Email = "admin@localhost.com",
-                EmailConfirmed = true,
-                PasswordHash = PasswordHasher.HashPassword("iLGCNS24!")
+                PasswordHash = PasswordHelper.HashPassword("iLGCNS24!")
             }
         ];
 
@@ -318,10 +316,14 @@ namespace iLG.Infrastructure.Data.Initialization
         [
             new UserInfo
             {
+                UserId = 1,
+                RelationshipId = 3,
+                CompanyId = 1,
+                JobId = 1,
                 FullName = "Administrator",
-                Age = 0,
+                DateOfBirth = DateTime.MinValue,
                 Gender = Gender.Unknown,
-                UserId = 1
+                Height = 0
             }
         ];
 
@@ -350,6 +352,208 @@ namespace iLG.Infrastructure.Data.Initialization
                 UserInfoId = 1,
                 Path = "https://png.pngtree.com/element_our/20190604/ourmid/pngtree-user-avatar-boy-image_1482937.jpg",
                 Type = ImageType.Avatar
+            }
+        ];
+
+        public static IEnumerable<Relationship> Relationships =>
+        [
+            new Relationship
+            {
+                Code = "LOV",
+                Title = "Lover"
+            },
+            new Relationship
+            {
+                Code = "SRR",
+                Title = "Serious Relationship"
+            },
+            new Relationship
+            {
+                Code = "FRS",
+                Title = "Friendship"
+            },
+            new Relationship
+            {
+                Code = "DTG",
+                Title = "Dating"
+            },
+            new Relationship
+            {
+                Code = "FWB",
+                Title = "Friend With Benefit"
+            },
+            new Relationship
+            {
+                Code = "ONS",
+                Title = "One Night Stand"
+            },
+            new Relationship
+            {
+                Code = "SGB",
+                Title = "Sugar Baby"
+            },
+            new Relationship
+            {
+                Code = "SGD",
+                Title = "Sugar Daddy"
+            }
+        ];
+
+        public static IEnumerable<Company> Companies =>
+        [
+            new Company
+            {
+                Code = "LGCn",
+                Title = "LG CNS"
+            },
+            new Company
+            {
+                Code = "LGDi",
+                Title = "LG Display"
+            },
+            new Company
+            {
+                Code = "LGEl",
+                Title = "LG Electronic"
+            },
+            new Company
+            {
+                Code = "LGIn",
+                Title = "LG Innotek"
+            },
+            new Company
+            {
+                Code = "LGCh",
+                Title = "LG Chem"
+            },
+            new Company
+            {
+                Code = "LGEs",
+                Title = "LG Energy Solution"
+            },
+            new Company
+            {
+                Code = "LGHh",
+                Title = "LG Household & Health Care"
+            },
+            new Company
+            {
+                Code = "LGUp",
+                Title = "LG U+"
+            },
+            new Company
+            {
+                Code = "LGHv",
+                Title = "LG HelloVision Corp."
+            },
+            new Company
+            {
+                Code = "LGMd",
+                Title = "LG Development Institute"
+            },
+            new Company
+            {
+                Code = "LGSp",
+                Title = "LG Sports"
+            }
+        ];
+
+        public static IEnumerable<Job> Jobs =>
+        [
+            new Job
+            {
+                Code = "SE01",
+                Title = "Full-Stack Developer"
+            },
+            new Job
+            {
+                Code = "SE02",
+                Title = "Front-End Developer"
+            },
+            new Job
+            {
+                Code = "SE03",
+                Title = "Back-End Developer"
+            },
+            new Job
+            {
+                Code = "SE04",
+                Title = "Mobile Developer"
+            },
+            new Job
+            {
+                Code = "SE05",
+                Title = "DevOps Engineer"
+            },
+            new Job
+            {
+                Code = "DA01",
+                Title = "Data Scientist"
+            },
+            new Job
+            {
+                Code = "DA02",
+                Title = "Data Analyst"
+            },
+            new Job
+            {
+                Code = "DA03",
+                Title = "Business Analyst"
+            },
+            new Job
+            {
+                Code = "PP01",
+                Title = "Project Manager"
+            },
+            new Job
+            {
+                Code = "PP02",
+                Title = "Product Owner"
+            },
+            new Job
+            {
+                Code = "DS01",
+                Title = "UI/UX Designer"
+            },
+            new Job
+            {
+                Code = "DS02",
+                Title = "Visual Designer"
+            },
+            new Job
+            {
+                Code = "BS01",
+                Title = "Product Marketing Manager"
+            },
+            new Job
+            {
+                Code = "BS02",
+                Title = "Growth Marketer"
+            },
+            new Job
+            {
+                Code = "BS03",
+                Title = "Business Partnerships Manager"
+            },
+            new Job
+            {
+                Code = "HR01",
+                Title = "Human Resources Manager"
+            },
+            new Job
+            {
+                Code = "HR02",
+                Title = "Talent Acquisition Manager"
+            },
+            new Job
+            {
+                Code = "HR03",
+                Title = "Training and Development Manager"
+            },
+            new Job
+            {
+                Code = "HR04",
+                Title = "Compensation and Benefits Manager"
             }
         ];
     }

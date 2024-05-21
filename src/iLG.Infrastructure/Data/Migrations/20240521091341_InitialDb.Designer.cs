@@ -12,7 +12,7 @@ using iLG.Infrastructure.Data;
 namespace iLG.Infrastructure.Data.Migrations
 {
     [DbContext(typeof(ILGDbContext))]
-    [Migration("20240520152250_InitialDb")]
+    [Migration("20240521091341_InitialDb")]
     partial class InitialDb
     {
         /// <inheritdoc />
@@ -27,6 +27,45 @@ namespace iLG.Infrastructure.Data.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("iLG.Domain.Entities.Company", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Companies");
+                });
 
             modelBuilder.Entity("iLG.Domain.Entities.Hobby", b =>
                 {
@@ -147,6 +186,45 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.ToTable("Images");
                 });
 
+            modelBuilder.Entity("iLG.Domain.Entities.Job", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Jobs");
+                });
+
             modelBuilder.Entity("iLG.Domain.Entities.Permission", b =>
                 {
                     b.Property<int>("Id")
@@ -181,6 +259,45 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Permissions");
+                });
+
+            modelBuilder.Entity("iLG.Domain.Entities.Relationship", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("CreatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UpdatedBy")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Relationships");
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.Role", b =>
@@ -278,21 +395,11 @@ namespace iLG.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<bool>("EmailConfirmed")
-                        .HasColumnType("bit");
-
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
 
                     b.Property<bool>("IsLocked")
                         .HasColumnType("bit");
-
-                    b.Property<string>("Otp")
-                        .HasMaxLength(6)
-                        .HasColumnType("nvarchar(6)");
-
-                    b.Property<DateTime?>("OtpExpiredTime")
-                        .HasColumnType("datetime2");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -317,17 +424,20 @@ namespace iLG.Infrastructure.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("Age")
-                        .HasColumnType("int");
-
                     b.Property<string>("Biography")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("CompanyId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("CreatedAt")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -341,8 +451,14 @@ namespace iLG.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("Height")
+                        .HasColumnType("int");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("bit");
+
+                    b.Property<int>("JobId")
+                        .HasColumnType("int");
 
                     b.Property<string>("Nickname")
                         .HasColumnType("nvarchar(max)");
@@ -350,8 +466,8 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("RelationshipStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("RelationshipId")
+                        .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
@@ -366,6 +482,12 @@ namespace iLG.Infrastructure.Data.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("JobId");
+
+                    b.HasIndex("RelationshipId");
 
                     b.HasIndex("UserId")
                         .IsUnique();
@@ -572,11 +694,35 @@ namespace iLG.Infrastructure.Data.Migrations
 
             modelBuilder.Entity("iLG.Domain.Entities.UserInfo", b =>
                 {
+                    b.HasOne("iLG.Domain.Entities.Company", "Company")
+                        .WithMany("UserInfos")
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iLG.Domain.Entities.Job", "Job")
+                        .WithMany("UserInfos")
+                        .HasForeignKey("JobId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("iLG.Domain.Entities.Relationship", "Relationship")
+                        .WithMany("UserInfos")
+                        .HasForeignKey("RelationshipId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("iLG.Domain.Entities.User", "User")
                         .WithOne("UserInfo")
                         .HasForeignKey("iLG.Domain.Entities.UserInfo", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Company");
+
+                    b.Navigation("Job");
+
+                    b.Navigation("Relationship");
 
                     b.Navigation("User");
                 });
@@ -641,9 +787,24 @@ namespace iLG.Infrastructure.Data.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("iLG.Domain.Entities.Company", b =>
+                {
+                    b.Navigation("UserInfos");
+                });
+
             modelBuilder.Entity("iLG.Domain.Entities.HobbyCategory", b =>
                 {
                     b.Navigation("Hobbies");
+                });
+
+            modelBuilder.Entity("iLG.Domain.Entities.Job", b =>
+                {
+                    b.Navigation("UserInfos");
+                });
+
+            modelBuilder.Entity("iLG.Domain.Entities.Relationship", b =>
+                {
+                    b.Navigation("UserInfos");
                 });
 
             modelBuilder.Entity("iLG.Domain.Entities.User", b =>
