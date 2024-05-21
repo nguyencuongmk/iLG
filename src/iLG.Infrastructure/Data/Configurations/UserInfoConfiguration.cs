@@ -11,10 +11,13 @@ namespace iLG.Infrastructure.Data.Configurations
         public void Configure(EntityTypeBuilder<UserInfo> builder)
         {
             builder.HasKey(ui => ui.Id);
-            builder.HasIndex(ui => ui.UserId).IsUnique();
+            builder.HasIndex(ui => ui.UserId);
             builder.Property(ui => ui.FullName).HasMaxLength(255);
             builder.Property(ui => ui.Gender).HasConversion(g => g.ToString(), dbGender => dbGender.ToEnum<Gender>());
             builder.Property(ui => ui.Zodiac).HasConversion(z => z.ToString(), dbZodiac => dbZodiac.ToEnum<Zodiac>());
+            builder.Property(ui => ui.Nickname).HasMaxLength(20);
+            builder.Property(ui => ui.PhoneNumber).HasMaxLength(10);
+            builder.ToTable(b => b.HasCheckConstraint("CK_Height", "[Height] >= 0 AND [Height] <= 300"));
 
             // Cấu hình quan hệ của Image và UserInfo
             builder.HasMany(ui => ui.Images)

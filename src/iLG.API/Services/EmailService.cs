@@ -1,12 +1,15 @@
 ﻿using iLG.API.Constants;
 using iLG.API.Helpers;
+using iLG.API.Models.Requests;
 using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Infrastructure.Repositories.Abstractions;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.Net;
 using System.Net.Mail;
+using System.Text;
 
 namespace iLG.API.Services
 {
@@ -16,25 +19,25 @@ namespace iLG.API.Services
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IDistributedCache _cache = cache;
 
-        public async Task<string> SendOtpEmail(string email)
+        public async Task<string> SendOtpEmail(SendOtpRequest request)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(request?.Email))
                 return Message.Error.Account.NOT_ENOUGH_INFO;
 
-            if(!EmailHelper.IsValidEmail(email))
+            if (!EmailHelper.IsValidEmail(request.Email))
                 return Message.Error.Account.INVALID_EMAIL;
 
-            if (await _userRepository.IsExistAsync(expression: u => u.Email == email))
+            if (await _userRepository.IsExistAsync(expression: u => u.Email == request.Email && !u.IsDeleted))
                 return Message.Error.Account.EXISTS_EMAIL;
 
-            var cacheOtp = await _cache.GetStringAsync(email);
+            var cacheOtp = await _cache.GetStringAsync(request.Email);
 
             if (!string.IsNullOrEmpty(cacheOtp))
                 return Message.Error.Account.CACHE_OTP;
 
             var otp = OtpHelper.GenerateOTP();
 
-            await _cache.SetStringAsync(email, otp, new DistributedCacheEntryOptions
+            await _cache.SetStringAsync(request.Email, otp, new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = DateTimeOffset.UtcNow.Add(TimeSpan.FromMinutes(2))
             });
@@ -44,7 +47,7 @@ namespace iLG.API.Services
                                 <p>Best Regard,</p>
                                 <p>iLG Support</p>";
 
-            await Send(_appSettings.MailSettings.MailServerUsername, _appSettings.MailSettings.MailServerPassword, [email], [], subject, body);
+            await Send(_appSettings.MailSettings.MailServerUsername, _appSettings.MailSettings.MailServerPassword, [request.Email], [], subject, body);
             return string.Empty;
         }
 

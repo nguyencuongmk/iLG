@@ -1,5 +1,6 @@
 ﻿using iLG.Domain.Abstractions;
 using iLG.Domain.Enums;
+using System.ComponentModel.DataAnnotations;
 
 namespace iLG.Domain.Entities
 {
@@ -31,7 +32,7 @@ namespace iLG.Domain.Entities
 
         public string? PhoneNumber { get; set; }
 
-        public int Height { get; set; }
+        public int? Height { get; set; }
 
         public Zodiac? Zodiac { get; set; }
 

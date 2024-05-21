@@ -7,7 +7,7 @@ namespace iLG.Infrastructure.Repositories
 {
     public class UserRepository(ILGDbContext context) : Repository<User>(context), IUserRepository
     {
-        public bool CheckPassword(User user, string requestPassword)
+        public bool CheckPassword(User? user, string requestPassword)
         {
             if (user == null || string.IsNullOrEmpty(requestPassword))
                 return false;

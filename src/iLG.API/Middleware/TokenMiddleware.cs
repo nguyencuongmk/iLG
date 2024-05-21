@@ -26,33 +26,13 @@ namespace iLG.API.Middleware
             else
             {
                 using (var scope = _scopeFactory.CreateScope())
-            {
-                var scopedServices = scope.ServiceProvider;
-                var userService = scopedServices.GetRequiredService<IUserService>();
-
-                var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
-
-                if (string.IsNullOrEmpty(token))
                 {
-                    var response = new ApiResponse();
-                    response.Errors.Add(new Error()
-                    {
-                        ErrorMessage = Message.Error.Account.INVALID_TOKEN
-                    });
+                    var scopedServices = scope.ServiceProvider;
+                    var userService = scopedServices.GetRequiredService<IUserService>();
 
-                    var result = response.GetResult(StatusCodes.Status401Unauthorized);
-                    context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                    await context.Response.WriteAsJsonAsync(result);
-                }
-                else
-                {
-                    var isValidToken = await userService.VerifyToken(token);
-                    if (isValidToken)
-                    {
-                        // Todo: Check Permission
-                        await _next(context);
-                    }
-                    else
+                    var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+
+                    if (string.IsNullOrEmpty(token))
                     {
                         var response = new ApiResponse();
                         response.Errors.Add(new Error()
@@ -64,8 +44,28 @@ namespace iLG.API.Middleware
                         context.Response.StatusCode = StatusCodes.Status401Unauthorized;
                         await context.Response.WriteAsJsonAsync(result);
                     }
+                    else
+                    {
+                        var isValidToken = await userService.VerifyToken(token);
+                        if (isValidToken)
+                        {
+                            // Todo: Check Permission
+                            await _next(context);
+                        }
+                        else
+                        {
+                            var response = new ApiResponse();
+                            response.Errors.Add(new Error()
+                            {
+                                ErrorMessage = Message.Error.Account.INVALID_TOKEN
+                            });
+
+                            var result = response.GetResult(StatusCodes.Status401Unauthorized);
+                            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            await context.Response.WriteAsJsonAsync(result);
+                        }
+                    }
                 }
-            }
             }
         }
     }

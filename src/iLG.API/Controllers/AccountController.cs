@@ -5,6 +5,7 @@ using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace iLG.API.Controllers
@@ -17,15 +18,15 @@ namespace iLG.API.Controllers
         private readonly IEmailService _emailService = emailService;
 
         /// <summary>
-        /// Login user
-        /// </summary>
+        /// Sign in an account
+        /// </summary-=  >
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("login")]
-        public async Task<ActionResult<ApiResponse>> Login([FromBody] LoginRequest request)
+        [HttpPost("signin")]
+        public async Task<ActionResult<ApiResponse>> Signin([FromBody] SigninRequest request)
         {
             var response = new ApiResponse();
-            var loginResponse = await _userService.Login(request);
+            var loginResponse = await _userService.SignIn(request);
 
             if (!string.IsNullOrEmpty(loginResponse.Item2))
             {
@@ -49,12 +50,12 @@ namespace iLG.API.Controllers
         }
 
         /// <summary>
-        /// Logout user
+        /// Sign out an account
         /// </summary>
         /// <returns></returns>
         [Authorize]
-        [HttpPatch("logout")]
-        public async Task<ActionResult<ApiResponse>> Logout()
+        [HttpPost("sigout")]
+        public async Task<ActionResult<ApiResponse>> Signout()
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
@@ -72,7 +73,7 @@ namespace iLG.API.Controllers
 
             _ = int.TryParse(user.FindFirst("userId")?.Value, out int userId);
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
-            var errorMessage = await _userService.Logout(userId, token);
+            var errorMessage = await _userService.SignOut(userId, token);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -94,15 +95,15 @@ namespace iLG.API.Controllers
         }
 
         /// <summary>
-        /// Register user
+        /// Sign up a new account
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        [HttpPost("register")]
-        public async Task<ActionResult<ApiResponse>> Register([FromBody] RegisterRequest request)
+        [HttpPost("signup")]
+        public async Task<ActionResult<ApiResponse>> SignUp([FromBody] SignupRequest request)
         {
             var response = new ApiResponse();
-            var errorMessage = await _userService.Register(request);
+            var errorMessage = await _userService.SignUp(request);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {
@@ -123,11 +124,11 @@ namespace iLG.API.Controllers
             return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_UP);
         }
 
-        [HttpGet("otp")]
-        public async Task<ActionResult<ApiResponse>> SendOtpEmail([FromQuery] string email)
+        [HttpPost("otp")]
+        public async Task<ActionResult<ApiResponse>> SendOtpEmail([FromBody] SendOtpRequest request)
         {
             var response = new ApiResponse();
-            var errorMessage = await _emailService.SendOtpEmail(email);
+            var errorMessage = await _emailService.SendOtpEmail(request);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {

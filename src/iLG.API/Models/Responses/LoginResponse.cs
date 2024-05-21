@@ -9,5 +9,8 @@ namespace iLG.API.Models.Responses
 
         [JsonProperty("accessToken")]
         public string AccessToken { get; set; }
+
+        [JsonProperty("isUpdatedInfo")]
+        public bool IsUpdatedInfo { get; set; }
     }
 }

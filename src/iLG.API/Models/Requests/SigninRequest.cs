@@ -2,7 +2,7 @@
 
 namespace iLG.API.Models.Requests
 {
-    public class LoginRequest
+    public class SigninRequest
     {
         [JsonProperty("email")]
         public string Email { get; set; }

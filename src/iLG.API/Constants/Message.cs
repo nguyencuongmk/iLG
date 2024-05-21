@@ -33,6 +33,7 @@
                 public const string LOGIN_FAILED = "Invalid email or password";
                 public const string INVALID_EMAIL = "Invalid email";
                 public const string INVALID_PASSWORD = "Invalid password";
+                public const string INVALID_CURRENT_PASSWORD = "Invalid current password";
                 public const string EXISTS_EMAIL = "Email already exists";
                 public const string NOT_EXISTS_USER = "User is not exists";
                 public const string ACCOUNT_LOCKED = "Account is locked";
@@ -48,6 +49,7 @@
             public static class UserInfo
             {
                 public const string NOT_EXISTS = "User Information is not exists";
+                public const string NOT_YET_UPDATED = "User information has not been updated";
             }
         }
     }

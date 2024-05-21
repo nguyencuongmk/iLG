@@ -1,8 +1,10 @@
-﻿namespace iLG.API.Services.Abstractions
+﻿using iLG.API.Models.Requests;
+
+namespace iLG.API.Services.Abstractions
 {
     public interface IEmailService
     {
-        Task<string> SendOtpEmail(string email);
+        Task<string> SendOtpEmail(SendOtpRequest request);
 
         Task<bool> SendNewPasswordEmail(string email, string password);
     }

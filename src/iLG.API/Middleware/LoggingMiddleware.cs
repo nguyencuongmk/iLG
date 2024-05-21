@@ -69,7 +69,7 @@ namespace iLG.API.Middleware
             response.Body.Seek(0, SeekOrigin.Begin);
             var responseBody = await new StreamReader(response.Body).ReadToEndAsync();
             response.Body.Seek(0, SeekOrigin.Begin);
-            return JToken.Parse(responseBody).ToString(Formatting.Indented);
+            return string.IsNullOrEmpty(responseBody) ? responseBody : JToken.Parse(responseBody).ToString(Formatting.Indented);
         }
     }
 }

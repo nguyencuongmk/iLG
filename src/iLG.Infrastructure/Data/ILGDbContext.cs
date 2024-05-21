@@ -2,6 +2,7 @@
 using iLG.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
+using System.Reflection.Emit;
 
 namespace iLG.Infrastructure.Data
 {

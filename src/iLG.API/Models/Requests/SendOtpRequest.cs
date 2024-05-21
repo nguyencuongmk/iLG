@@ -2,7 +2,7 @@
 
 namespace iLG.API.Models.Requests
 {
-    public class ResendOtpRequest
+    public class SendOtpRequest
     {
         [JsonProperty("email")]
         public string Email { get; set; }
