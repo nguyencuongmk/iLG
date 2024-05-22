@@ -9,7 +9,7 @@ namespace iLG.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    [Authorize(Policy = "Hobby.View")]
     public class HobbyController(IHobbyCategoryRepository hobbyRepository, IMapper mapper) : ControllerBase
     {
         private readonly IHobbyCategoryRepository _hobbyRepository = hobbyRepository;

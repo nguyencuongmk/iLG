@@ -3,7 +3,6 @@ using iLG.API.Extensions;
 using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
-using iLG.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,20 +29,7 @@ namespace iLG.API.Controllers
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
-
-            if (!user.Identity.IsAuthenticated)
-            {
-                response.Errors.Add(new Error
-                {
-                    ErrorMessage = Message.Error.Account.NOT_AUTH
-                });
-
-                var result = response.GetResult(StatusCodes.Status400BadRequest);
-                return BadRequest(result);
-            }
-
             _ = int.TryParse(user.FindFirst("userId")?.Value, out int userId);
-
             var userInfos = await _userInfoService.SearchSuitableUser(userId, minAge, maxAge, gender, pageIndex, pageSize);
 
             if (!string.IsNullOrEmpty(userInfos.Item2))

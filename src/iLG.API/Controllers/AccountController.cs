@@ -10,7 +10,7 @@ using System.Security.Claims;
 
 namespace iLG.API.Controllers
 {
-    [Route("api/accounts")]
+    [Route("api/[controller]")]
     [ApiController]
     public class AccountController(IUserService userService, IEmailService emailService) : ControllerBase
     {
@@ -59,18 +59,6 @@ namespace iLG.API.Controllers
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
-
-            if (!user.Identity.IsAuthenticated)
-            {
-                response.Errors.Add(new Error
-                {
-                    ErrorMessage = Message.Error.Account.NOT_AUTH
-                });
-
-                var result = response.GetResult(StatusCodes.Status400BadRequest);
-                return BadRequest(result);
-            }
-
             _ = int.TryParse(user.FindFirst("userId")?.Value, out int userId);
             var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
             var errorMessage = await _userService.SignOut(userId, token);
@@ -124,6 +112,11 @@ namespace iLG.API.Controllers
             return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_UP);
         }
 
+        /// <summary>
+        /// Send OTP code
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
         [HttpPost("otp")]
         public async Task<ActionResult<ApiResponse>> SendOtpEmail([FromBody] SendOtpRequest request)
         {
@@ -155,18 +148,6 @@ namespace iLG.API.Controllers
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
-
-            if (!user.Identity.IsAuthenticated)
-            {
-                response.Errors.Add(new Error
-                {
-                    ErrorMessage = Message.Error.Account.NOT_AUTH
-                });
-
-                var result = response.GetResult(StatusCodes.Status400BadRequest);
-                return BadRequest(result);
-            }
-
             var email = user.FindFirst(ClaimTypes.Email)?.Value;
             var errorMessage = await _userService.ChangePassword(request, email);
 

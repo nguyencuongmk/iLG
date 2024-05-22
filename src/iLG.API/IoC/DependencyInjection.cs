@@ -7,6 +7,7 @@ using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Infrastructure.Data.Initialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -76,6 +77,8 @@ namespace iLG.API.IoC
                 };
             });
 
+            services.AddAuthorization(x => x.AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View"))));
+
             // Config Auto Mapper
             services.AddAutoMapper(typeof(Mapper));
 
@@ -83,6 +86,7 @@ namespace iLG.API.IoC
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserInfoService, UserInfoService>();
+            services.AddScoped<IAuthorizationHandler, PermissionHandler>();
 
             // Config Exception Handler
             services.AddExceptionHandler<ExceptionHandler>();
