@@ -81,7 +81,7 @@ namespace iLG.API.Services
 
             #region Business Logic
 
-            var user = await _userRepository.GetAsync(u => u.Email == request.Email && !u.IsDeleted); // check if need to u.IsLocked?
+            var user = await _userRepository.GetAsync(u => u.Email == request.Email && !u.IsDeleted);
 
             if (user is null)
                 return (string.Empty, Message.Error.Common.SERVER_ERROR);
@@ -199,7 +199,7 @@ namespace iLG.API.Services
 
             #region Business Logic
 
-            var userToken = await _userTokenRepository.GetAsync(ut => ut.Token == token && ut.UserId == userId); // check if need to ut.IsDeleted?
+            var userToken = await _userTokenRepository.GetAsync(ut => ut.Token == token && ut.UserId == userId);
 
             if (userToken is null)
                 return Message.Error.Common.SERVER_ERROR;
