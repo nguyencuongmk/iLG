@@ -5,6 +5,7 @@ using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace iLG.API.Controllers
 {
@@ -29,7 +30,7 @@ namespace iLG.API.Controllers
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
-            _ = int.TryParse(user.FindFirst("userId")?.Value, out int userId);
+            _ = int.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
             var userInfos = await _userInfoService.SearchSuitableUser(userId, minAge, maxAge, gender, pageIndex, pageSize);
 
             if (!string.IsNullOrEmpty(userInfos.Item2))

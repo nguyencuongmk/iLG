@@ -58,10 +58,8 @@ namespace iLG.API.Controllers
         public async Task<ActionResult<ApiResponse>> Signout()
         {
             var response = new ApiResponse();
-            var user = HttpContext.User;
-            _ = int.TryParse(user.FindFirst("userId")?.Value, out int userId);
-            var token = HttpContext.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
-            var errorMessage = await _userService.SignOut(userId, token);
+            _ = int.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
+            var errorMessage = await _userService.SignOut(userId);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {

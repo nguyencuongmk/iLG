@@ -75,6 +75,26 @@ namespace iLG.API.IoC
                     ValidateAudience = true,
                     ValidAudience = configuration["AppSettings:JwtSettings:Audience"],
                 };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        // Kiểm tra xem token có được gửi trong header Authorization không
+                        var authHeader = context.Request.Headers.Authorization.ToString();
+                        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
+                        {
+                            // Trả về lỗi 401 Unauthorized nếu token không được gửi
+                            context.Fail("Token not found in Authorization header");
+                            return Task.CompletedTask;
+                        }
+
+                        // Trích xuất token từ header Authorization
+                        context.Token = authHeader.Substring("Bearer ".Length).Trim();
+
+                        return Task.CompletedTask;
+                    }
+                };
             });
 
             services.AddAuthorization(x => x.AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View"))));
@@ -83,6 +103,7 @@ namespace iLG.API.IoC
             services.AddAutoMapper(typeof(Mapper));
 
             // Config Services
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserInfoService, UserInfoService>();
@@ -132,13 +153,10 @@ namespace iLG.API.IoC
                 await app.InitializeDatabaseAsync();
             }
 
-            // Initialize JwtHelper with dependency from DI Container
-            JwtHelper.Initialize(app.Services.GetRequiredService<IOptions<AppSettings>>());
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 
