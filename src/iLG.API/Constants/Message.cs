@@ -38,7 +38,8 @@
                 public const string NOT_EXISTS_USER = "User is not exists";
                 public const string ACCOUNT_LOCKED = "Account is locked";
                 public const string EMAIL_NOT_YET_CONFIRMED = "Account has not been confirmed by email";
-                public const string INVALID_TOKEN = "Invalid token";
+                public const string INVALID_RF_TOKEN = "Refresh token is invalid or expired";
+                public const string EMPTY_TOKEN = "Token is null or empty";
                 public const string NOT_ENOUGH_INFO = "Not enough information. Please fill all the required fields";
                 public const string NOT_AUTH = "Account has not been authenticated";
                 public const string INVALID_OTP = "Invalid OTP";

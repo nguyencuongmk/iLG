@@ -5,13 +5,11 @@ namespace iLG.API.Services.Abstractions
 {
     public interface IUserService
     {
-        Task<(LoginResponse, string)> SignIn(SigninRequest request);
+        Task<(SigninResponse, string)> SignIn(SigninRequest request);
 
-        Task<string> SignOut(int userId, string? token);
+        Task<string> SignOut(int userId);
 
         Task<string> SignUp(SignupRequest request);
-
-        Task<bool> VerifyToken(string token);
 
         Task<string> ChangePassword(ChangePasswordRequest request, string? email);
 

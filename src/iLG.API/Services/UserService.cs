@@ -4,20 +4,19 @@ using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using iLG.Domain.Entities;
-using iLG.Domain.Enums;
-using iLG.Infrastructure.Extentions;
 using iLG.Infrastructure.Helpers;
 using iLG.Infrastructure.Repositories.Abstractions;
 using Microsoft.Extensions.Caching.Distributed;
 
 namespace iLG.API.Services
 {
-    public class UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository, IDistributedCache cache) : IUserService
+    public class UserService(IUserRepository userRepository, IUserTokenRepository userTokenRepository, IRoleRepository roleRepository, IDistributedCache cache, ITokenService tokenService) : IUserService
     {
         private readonly IUserRepository _userRepository = userRepository;
         private readonly IUserTokenRepository _userTokenRepository = userTokenRepository;
         private readonly IRoleRepository _roleRepository = roleRepository;
         private readonly IDistributedCache _cache = cache;
+        private readonly ITokenService _tokenService = tokenService;
 
         /// <summary>
         /// Change password
@@ -100,18 +99,17 @@ namespace iLG.API.Services
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
-        public async Task<(LoginResponse, string)> SignIn(SigninRequest request)
+        public async Task<(SigninResponse, string)> SignIn(SigninRequest request)
         {
             #region Verify Request
 
-            var response = new LoginResponse();
+            var response = new SigninResponse();
 
             if (string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password))
                 return (response, Message.Error.Account.NOT_ENOUGH_INFO);
 
             if (!EmailHelper.IsValidEmail(request.Email))
                 return (response, Message.Error.Account.INVALID_EMAIL);
-
 
             if (!PasswordHelper.IsValidPassword(request.Password))
                 return (response, Message.Error.Account.INVALID_PASSWORD);
@@ -133,47 +131,39 @@ namespace iLG.API.Services
             if (user.IsLocked)
                 return (response, Message.Error.Account.ACCOUNT_LOCKED);
 
-            var userTokens = await _userTokenRepository.GetListAsync
-            (
-                expression: ut => ut.UserId == user.Id && ut.ExpiredTime > DateTime.UtcNow && !ut.IsDeleted,
-                orderBy: o => o.OrderByDescending(ut => ut.ExpiredTime)
-            );
+            var machineName = Environment.MachineName;
+            var platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform);
+            var userToken = await _userTokenRepository.GetAsync(expression: ut => ut.UserId == user.Id && ut.MachineName == machineName && ut.Platform == platform);
+            var refreshToken = _tokenService.GenerateRefreshToken();
+            var expiredTime = DateTime.UtcNow.AddDays(7);
 
-            if (userTokens == null || !userTokens.Any())
+            if (userToken is null)
             {
-                var roles = _userRepository.GetRoles(user);
-
-                if (roles.Count == 0)
-                    return (response, Message.Error.Common.SERVER_ERROR);
-
-                var accessToken = JwtHelper.GenerateAccessToken(user.Email, user.Id, roles);
-
-                if (string.IsNullOrEmpty(accessToken.Item1))
-                    return (response, Message.Error.Common.SERVER_ERROR);
-
-                // Insert Access Token to Database
-                user.UserTokens.Add(new UserToken
+                userToken = new UserToken
                 {
-                    Token = accessToken.Item1,
-                    ExpiredTime = accessToken.Item2,
-                    Platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform),
-                    MachineName = Environment.MachineName
-                });
-
-                await _userRepository.UpdateAsync(user);
-                response.AccessToken = accessToken.Item1;
+                    UserId = user.Id,
+                    Token = refreshToken,
+                    ExpiredTime = expiredTime,
+                    Platform = platform,
+                    MachineName = machineName
+                };
+                await _userTokenRepository.CreateAsync(userToken);
             }
             else
             {
-                var userToken = userTokens.FirstOrDefault();
-
-                if (userToken == null)
-                    return (response, Message.Error.Common.SERVER_ERROR);
-
-                response.AccessToken = userToken.Token;
+                userToken.Token = refreshToken;
+                userToken.ExpiredTime = expiredTime;
+                await _userTokenRepository.UpdateAsync(userToken);
             }
 
+            var accessToken = _tokenService.GenerateAccessToken(user);
+
+            if (string.IsNullOrEmpty(accessToken))
+                return (response, Message.Error.Common.SERVER_ERROR);
+
             response.Email = user.Email;
+            response.AccessToken = accessToken;
+            response.RefreshToken = userToken.Token;
             response.IsUpdatedInfo = user.UserInfo is not null;
 
             return (response, string.Empty);
@@ -187,19 +177,13 @@ namespace iLG.API.Services
         /// <param name="userId"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<string> SignOut(int userId, string? token)
+        public async Task<string> SignOut(int userId)
         {
-            #region Verify Request
-
-            if (string.IsNullOrEmpty(token))
-                return Message.Error.Account.NOT_ENOUGH_INFO;
-
-
-            #endregion Verify Request
-
             #region Business Logic
 
-            var userToken = await _userTokenRepository.GetAsync(ut => ut.Token == token && ut.UserId == userId);
+            var machineName = Environment.MachineName;
+            var platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform);
+            var userToken = await _userTokenRepository.GetAsync(ut => ut.UserId == userId && ut.MachineName == machineName && ut.Platform == platform);
 
             if (userToken is null)
                 return Message.Error.Common.SERVER_ERROR;
@@ -268,34 +252,6 @@ namespace iLG.API.Services
             return string.Empty;
 
             #endregion Business Logic
-        }
-
-        /// <summary>
-        /// Verify user token
-        /// </summary>
-        /// <param name="token"></param>
-        /// <returns></returns>
-        public async Task<bool> VerifyToken(string token)
-        {
-            if (string.IsNullOrEmpty(token))
-                return false;
-
-            var email = JwtHelper.GetEmailFromToken(token);
-
-            if (string.IsNullOrEmpty(email))
-                return false;
-
-            var user = await _userRepository.GetAsync(expression: u => u.Email == email);
-
-            if (user is null)
-                return false;
-
-            var isValidToken = await _userTokenRepository.IsExistAsync
-            (
-                expression: ut => ut.Token == token && ut.UserId == user.Id && ut.ExpiredTime > DateTime.UtcNow && !ut.IsDeleted
-            );
-
-            return isValidToken;
         }
     }
 }

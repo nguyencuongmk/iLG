@@ -1,14 +1,11 @@
 ﻿using iLG.API.Handlers;
-using iLG.API.Helpers;
 using iLG.API.Maps;
 using iLG.API.Middleware;
 using iLG.API.Services;
 using iLG.API.Services.Abstractions;
-using iLG.API.Settings;
 using iLG.Infrastructure.Data.Initialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -77,12 +74,14 @@ namespace iLG.API.IoC
                 };
             });
 
-            services.AddAuthorization(x => x.AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View"))));
+            services.AddAuthorizationBuilder()
+                    .AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View")));
 
             // Config Auto Mapper
             services.AddAutoMapper(typeof(Mapper));
 
             // Config Services
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IUserService, UserService>();
             services.AddScoped<IEmailService, EmailService>();
             services.AddScoped<IUserInfoService, UserInfoService>();
@@ -132,13 +131,10 @@ namespace iLG.API.IoC
                 await app.InitializeDatabaseAsync();
             }
 
-            // Initialize JwtHelper with dependency from DI Container
-            JwtHelper.Initialize(app.Services.GetRequiredService<IOptions<AppSettings>>());
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
-            app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 

@@ -4,6 +4,7 @@ using iLG.Infrastructure.Repositories.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Security.Claims;
 using System.Threading;
 
 namespace iLG.API.Handlers
@@ -20,7 +21,7 @@ namespace iLG.API.Handlers
 
         protected override async Task HandleRequirementAsync(AuthorizationHandlerContext context, PermissionRequirement requirement)
         {
-            _ = int.TryParse(context.User.FindFirst("userId")?.Value, out int userId);
+            _ = int.TryParse(context.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
             var user = await _userRepository.GetAsync(expression: u => u.Id == userId && !u.IsLocked && !u.IsDeleted);
             var userRoles = user?.Roles;
             var permissions = await _permissionRepository.GetPermissionsByRoles(userRoles);
