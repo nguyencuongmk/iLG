@@ -1,4 +1,6 @@
-﻿using iLG.Domain.Entities;
+﻿using iLG.API.Models.Responses;
+using iLG.Domain.Entities;
+using System.Security.Claims;
 
 namespace iLG.API.Services.Abstractions
 {
@@ -8,10 +10,6 @@ namespace iLG.API.Services.Abstractions
 
         string GenerateRefreshToken();
 
-        Task<bool> IsRefreshTokenValid(string refreshToken);
-
-        int? GetUserIdFromAccessToken(string accessToken);
-
-        Task<string> GetNewAccessToken(string refreshToken);
+        Task<(TokenResponse, string)> GetNewToken(HttpRequest request);
     }
 }

@@ -1,4 +1,7 @@
-﻿using iLG.API.Services.Abstractions;
+﻿using iLG.API.Constants;
+using iLG.API.Helpers;
+using iLG.API.Models.Responses;
+using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Domain.Entities;
 using iLG.Infrastructure.Repositories.Abstractions;
@@ -10,11 +13,10 @@ using System.Text;
 
 namespace iLG.API.Services
 {
-    public class TokenService(IOptions<AppSettings> options, IUserTokenRepository userTokenRepository, IUserRepository userRepository) : ITokenService
+    public class TokenService(IOptions<AppSettings> options, IUserTokenRepository userTokenRepository) : ITokenService
     {
         private readonly AppSettings _appSettings = options.Value;
         private readonly IUserTokenRepository _userTokenRepository = userTokenRepository;
-        private readonly IUserRepository _userRepository = userRepository;
 
         public string GenerateAccessToken(User user)
         {
@@ -29,8 +31,8 @@ namespace iLG.API.Services
                 };
 
                 claimList.AddRange(user.Roles.Select(r => r.Name).Select(role => new Claim(ClaimTypes.Role, role)));
-                //var expires = DateTime.UtcNow.AddHours(1);
-                var expires = DateTime.UtcNow.AddSeconds(1);
+                var expires = DateTime.UtcNow.AddHours(1);
+                //var expires = DateTime.UtcNow.AddSeconds(1);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -58,36 +60,106 @@ namespace iLG.API.Services
             return Convert.ToBase64String(randomNumber);
         }
 
-        public async Task<bool> IsRefreshTokenValid(string refreshToken)
+        public async Task<(TokenResponse, string)> GetNewToken(HttpRequest request)
         {
-            var token = await _userTokenRepository.GetAsync(ut => ut.Token == refreshToken && ut.ExpiredTime > DateTime.Now);
-            return token != null;
+            var response = new TokenResponse();
+            var accessToken = GetAccessTokenFromRequest(request);
+            var refreshToken = GetRefreshTokenFromRequest(request);
+
+            if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
+                return (response, Message.Error.Account.EMPTY_TOKEN);
+
+            if (IsAccessTokenValid(accessToken))
+            {
+                response.AccessToken = accessToken;
+                response.RefreshToken = refreshToken;
+                return (response, string.Empty);
+            }
+
+            var principal = GetPrincipalFromExpiredToken(accessToken);
+            _ = int.TryParse(principal?.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
+            var machineName = Environment.MachineName;
+            var platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform);
+            var userToken = await _userTokenRepository.GetAsync(ut => ut.UserId == userId && ut.Token == refreshToken && ut.ExpiredTime > DateTime.Now && ut.MachineName == machineName && ut.Platform == platform);
+
+            if (userToken is null)
+                return (response, Message.Error.Account.INVALID_RF_TOKEN);
+
+            var newAccessToken = GenerateAccessToken(userToken.User);
+            var newRefreshToken = GenerateRefreshToken();
+
+            userToken.Token = newRefreshToken;
+            userToken.ExpiredTime = DateTime.UtcNow.AddDays(7);
+            await _userTokenRepository.UpdateAsync(userToken);
+
+            response.AccessToken = newAccessToken;
+            response.RefreshToken = newRefreshToken;
+
+            return (response, string.Empty);
         }
 
-        public async Task<string> GetNewAccessToken(string refreshToken)
+        private bool IsAccessTokenValid(string accessToken)
         {
-            // Lấy Access Token mới từ Refresh Token
-            var token = await _userTokenRepository.GetAsync(t => t.Token == refreshToken && t.ExpiredTime > DateTime.Now);
-            if (token == null)
-                return null;
-
-            var user = await _userRepository.GetAsync(u => u.Id == token.UserId);
-            if (user == null)
-                return null;
-
-            var newAccessToken = GenerateAccessToken(user);
-            return newAccessToken;
-        }
-
-        public int? GetUserIdFromAccessToken(string accessToken)
-        {
-            // Lấy ID người dùng từ Access Token
             try
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwtToken = handler.ReadJwtToken(accessToken);
-                var userId = int.Parse(jwtToken.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value);
-                return userId;
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_appSettings.JwtSettings.Secret);
+
+                var validationParameters = new TokenValidationParameters
+                {
+                    RequireExpirationTime = true,
+                    ValidateIssuer = true,
+                    ValidIssuer = _appSettings.JwtSettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(key),
+                    ValidateLifetime = true,
+                    ClockSkew = TimeSpan.FromMinutes(0),
+                    ValidateAudience = true,
+                    ValidAudience = _appSettings.JwtSettings.Audience,
+                };
+
+                var principal = new JwtSecurityTokenHandler().ValidateToken(accessToken, validationParameters, out _);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        private string GetAccessTokenFromRequest(HttpRequest request)
+        {
+            var authorizationHeader = request.Headers.Authorization.ToString();
+
+            if (!string.IsNullOrEmpty(authorizationHeader))
+                if (authorizationHeader.StartsWith("Bearer ", StringComparison.OrdinalIgnoreCase))
+                    return authorizationHeader["Bearer ".Length..].Trim();
+
+            return string.Empty;
+        }
+
+        private string GetRefreshTokenFromRequest(HttpRequest request) => request.Headers["x-Refresh-Token"].ToString();
+
+        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        {
+            try
+            {
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidIssuer = _appSettings.JwtSettings.Issuer,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.JwtSettings.Secret)),
+                    ValidateLifetime = false,
+                    ValidateAudience = true,
+                    ValidAudience = _appSettings.JwtSettings.Audience,
+                };
+
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var principal = tokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken securityToken);
+
+                if (securityToken is not JwtSecurityToken jwtSecurityToken || !jwtSecurityToken.Header.Alg.Equals(SecurityAlgorithms.HmacSha256, StringComparison.InvariantCultureIgnoreCase))
+                    return null;
+
+                return principal;
             }
             catch
             {

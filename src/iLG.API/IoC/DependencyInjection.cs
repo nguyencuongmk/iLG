@@ -1,14 +1,11 @@
 ﻿using iLG.API.Handlers;
-using iLG.API.Helpers;
 using iLG.API.Maps;
 using iLG.API.Middleware;
 using iLG.API.Services;
 using iLG.API.Services.Abstractions;
-using iLG.API.Settings;
 using iLG.Infrastructure.Data.Initialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -75,29 +72,10 @@ namespace iLG.API.IoC
                     ValidateAudience = true,
                     ValidAudience = configuration["AppSettings:JwtSettings:Audience"],
                 };
-
-                options.Events = new JwtBearerEvents
-                {
-                    OnMessageReceived = context =>
-                    {
-                        // Kiểm tra xem token có được gửi trong header Authorization không
-                        var authHeader = context.Request.Headers.Authorization.ToString();
-                        if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
-                        {
-                            // Trả về lỗi 401 Unauthorized nếu token không được gửi
-                            context.Fail("Token not found in Authorization header");
-                            return Task.CompletedTask;
-                        }
-
-                        // Trích xuất token từ header Authorization
-                        context.Token = authHeader.Substring("Bearer ".Length).Trim();
-
-                        return Task.CompletedTask;
-                    }
-                };
             });
 
-            services.AddAuthorization(x => x.AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View"))));
+            services.AddAuthorizationBuilder()
+                    .AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View")));
 
             // Config Auto Mapper
             services.AddAutoMapper(typeof(Mapper));

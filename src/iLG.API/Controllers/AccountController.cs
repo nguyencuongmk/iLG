@@ -5,17 +5,17 @@ using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
 namespace iLG.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IUserService userService, IEmailService emailService) : ControllerBase
+    public class AccountController(IUserService userService, IEmailService emailService, ITokenService tokenService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
         private readonly IEmailService _emailService = emailService;
+        private readonly ITokenService _tokenService = tokenService;
 
         /// <summary>
         /// Sign in an account
@@ -198,6 +198,37 @@ namespace iLG.API.Controllers
             await _emailService.SendNewPasswordEmail(request.Email, forgotPassword.Item1);
 
             return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.NEW_PASSWORD);
+        }
+
+        /// <summary>
+        /// Get new Token
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("refresh-token")]
+        public async Task<ActionResult<ApiResponse>> RefreshToken()
+        {
+            var response = new ApiResponse();
+            var tokenResponse = await _tokenService.GetNewToken(Request);
+
+            if (!string.IsNullOrEmpty(tokenResponse.Item2))
+            {
+                response.Errors.Add(new Error
+                {
+                    ErrorMessage = tokenResponse.Item2
+                });
+
+                if (tokenResponse.Item2 == Message.Error.Common.SERVER_ERROR)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
+                }
+
+                var result = response.GetResult(StatusCodes.Status400BadRequest);
+                return BadRequest(result);
+            }
+
+            response.Data = tokenResponse.Item1;
+
+            return response.GetResult(StatusCodes.Status200OK);
         }
     }
 }
