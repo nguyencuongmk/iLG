@@ -5,18 +5,21 @@ using iLG.API.Services.Abstractions;
 using iLG.API.Settings;
 using iLG.Domain.Entities;
 using iLG.Infrastructure.Repositories.Abstractions;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json.Linq;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
 namespace iLG.API.Services
 {
-    public class TokenService(IOptions<AppSettings> options, IUserTokenRepository userTokenRepository) : ITokenService
+    public class TokenService(IOptions<AppSettings> options, IUserTokenRepository userTokenRepository, IDistributedCache cache) : ITokenService
     {
         private readonly AppSettings _appSettings = options.Value;
         private readonly IUserTokenRepository _userTokenRepository = userTokenRepository;
+        private readonly IDistributedCache _cache = cache;
 
         public string GenerateAccessToken(User user)
         {
@@ -31,8 +34,8 @@ namespace iLG.API.Services
                 };
 
                 claimList.AddRange(user.Roles.Select(r => r.Name).Select(role => new Claim(ClaimTypes.Role, role)));
-                var expires = DateTime.UtcNow.AddHours(1);
-                //var expires = DateTime.UtcNow.AddSeconds(1);
+                //var expires = DateTime.UtcNow.AddHours(1);
+                var expires = DateTime.UtcNow.AddMinutes(1);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {
@@ -43,8 +46,15 @@ namespace iLG.API.Services
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256)
                 };
 
-                var token = tokenHandler.CreateToken(tokenDescriptor);
-                return tokenHandler.WriteToken(token);
+                var sToken = tokenHandler.CreateToken(tokenDescriptor);
+                var token =  tokenHandler.WriteToken(sToken);
+
+                _cache.SetString($"{token}", user.Id.ToString(), new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpiration = new DateTimeOffset(expires)
+                });
+
+                return token;
             }
             catch
             {
@@ -98,7 +108,7 @@ namespace iLG.API.Services
             return (response, string.Empty);
         }
 
-        private bool IsAccessTokenValid(string accessToken)
+        public bool IsAccessTokenValid(string accessToken)
         {
             try
             {
@@ -118,6 +128,13 @@ namespace iLG.API.Services
                 };
 
                 var principal = new JwtSecurityTokenHandler().ValidateToken(accessToken, validationParameters, out _);
+
+                var userId = _cache.GetString($"{accessToken}");
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return false;
+                }
+
                 return true;
             }
             catch
@@ -126,7 +143,7 @@ namespace iLG.API.Services
             }
         }
 
-        private string GetAccessTokenFromRequest(HttpRequest request)
+        public string GetAccessTokenFromRequest(HttpRequest request)
         {
             var authorizationHeader = request.Headers.Authorization.ToString();
 

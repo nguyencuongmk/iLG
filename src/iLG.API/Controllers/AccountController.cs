@@ -59,7 +59,8 @@ namespace iLG.API.Controllers
         {
             var response = new ApiResponse();
             _ = int.TryParse(HttpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
-            var errorMessage = await _userService.SignOut(userId);
+            var accessToken = _tokenService.GetAccessTokenFromRequest(Request);
+            var errorMessage = await _userService.SignOut(userId, accessToken);
 
             if (!string.IsNullOrEmpty(errorMessage))
             {

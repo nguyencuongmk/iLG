@@ -10,6 +10,10 @@ namespace iLG.API.Services.Abstractions
 
         string GenerateRefreshToken();
 
+        string GetAccessTokenFromRequest(HttpRequest request);
+
+        bool IsAccessTokenValid(string accessToken);
+
         Task<(TokenResponse, string)> GetNewToken(HttpRequest request);
     }
 }

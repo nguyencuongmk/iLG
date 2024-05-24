@@ -7,7 +7,7 @@ namespace iLG.API.Services.Abstractions
     {
         Task<(SigninResponse, string)> SignIn(SigninRequest request);
 
-        Task<string> SignOut(int userId);
+        Task<string> SignOut(int userId, string accessToken);
 
         Task<string> SignUp(SignupRequest request);
 

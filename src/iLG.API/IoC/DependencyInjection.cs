@@ -135,6 +135,7 @@ namespace iLG.API.IoC
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
+            app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();
             app.UseExceptionHandler(options => { });
 

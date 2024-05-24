@@ -177,7 +177,7 @@ namespace iLG.API.Services
         /// <param name="userId"></param>
         /// <param name="token"></param>
         /// <returns></returns>
-        public async Task<string> SignOut(int userId)
+        public async Task<string> SignOut(int userId, string accessToken)
         {
             #region Business Logic
 
@@ -190,6 +190,7 @@ namespace iLG.API.Services
 
             userToken.ExpiredTime = DateTime.MinValue;
             await _userTokenRepository.UpdateAsync(userToken);
+            _cache.Remove(accessToken);
 
             return string.Empty;
 
