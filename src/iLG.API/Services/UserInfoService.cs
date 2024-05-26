@@ -27,7 +27,12 @@ namespace iLG.API.Services
             if (userInfo is null)
                 message = Message.Error.UserInfo.NOT_EXISTS;
             else
+            {
                 userInfoResponse = _mapper.Map<UserInfoResponse>(userInfo);
+                userInfoResponse.Relationship = userInfo.Relationship.Title;
+                userInfoResponse.Company = userInfo.Company.Title;
+                userInfoResponse.Job = userInfo.Job.Title;
+            }
 
             return (userInfoResponse, message);
         }

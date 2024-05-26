@@ -34,8 +34,8 @@ namespace iLG.API.Services
                 };
 
                 claimList.AddRange(user.Roles.Select(r => r.Name).Select(role => new Claim(ClaimTypes.Role, role)));
-                //var expires = DateTime.UtcNow.AddHours(1);
-                var expires = DateTime.UtcNow.AddMinutes(1);
+                var expires = DateTime.UtcNow.AddHours(1);
+                //var expires = DateTime.UtcNow.AddMinutes(1);
 
                 var tokenDescriptor = new SecurityTokenDescriptor
                 {

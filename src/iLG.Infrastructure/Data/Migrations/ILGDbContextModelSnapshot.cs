@@ -422,6 +422,7 @@ namespace iLG.Infrastructure.Data.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Biography")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("CompanyId")
@@ -448,7 +449,7 @@ namespace iLG.Infrastructure.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("Height")
+                    b.Property<int>("Height")
                         .HasColumnType("int");
 
                     b.Property<bool>("IsDeleted")

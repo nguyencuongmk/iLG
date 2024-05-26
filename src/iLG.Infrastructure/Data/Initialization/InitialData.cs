@@ -322,7 +322,10 @@ namespace iLG.Infrastructure.Data.Initialization
                 JobId = 1,
                 FullName = "Administrator",
                 DateOfBirth = DateTime.MinValue,
-                Gender = Gender.Unknown
+                Gender = Gender.Unknown,
+                Height = 0,
+                Zodiac = Zodiac.Capricorn,
+                Biography = "Bio"
             }
         ];
 

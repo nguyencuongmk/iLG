@@ -6,8 +6,10 @@ using iLG.API.Services.Abstractions;
 using iLG.Infrastructure.Data.Initialization;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.SwaggerGen;
 using System.Text;
 
 namespace iLG.API.IoC
@@ -51,6 +53,13 @@ namespace iLG.API.IoC
                         new List<string>()
                     }
                 });
+
+                c.CustomOperationIds(apiDescription =>
+                {
+                    return apiDescription.TryGetMethodInfo(out var methodInfo)
+                        ? methodInfo.Name
+                        : null;
+                });
             });
 
             // Config Authentication
@@ -77,6 +86,12 @@ namespace iLG.API.IoC
             services.AddAuthorizationBuilder()
                     .AddPolicy("Hobby.View", policy => policy.Requirements.Add(new PermissionRequirement("Hobby.View")));
 
+            // Prevents property validation, which is performed by .NET default
+            services.Configure<ApiBehaviorOptions>(options =>
+            {
+                options.SuppressModelStateInvalidFilter = true;
+            });
+
             // Config Auto Mapper
             services.AddAutoMapper(typeof(Mapper));
 
@@ -91,7 +106,11 @@ namespace iLG.API.IoC
             services.AddExceptionHandler<ExceptionHandler>();
 
             // Config Routing
-            services.AddRouting(options => options.LowercaseUrls = true);
+            services.AddRouting(options =>
+            {
+                options.LowercaseUrls = true;
+                options.LowercaseQueryStrings = true;
+            });
 
             return services;
         }
@@ -127,6 +146,11 @@ namespace iLG.API.IoC
                 app.UseSwaggerUI(c =>
                 {
                     c.SwaggerEndpoint("v1/swagger.json", "ILG API");
+
+                    c.DefaultModelExpandDepth(2);
+                    c.DefaultModelRendering(Swashbuckle.AspNetCore.SwaggerUI.ModelRendering.Model);
+                    c.DisplayRequestDuration();
+                    c.DocExpansion(Swashbuckle.AspNetCore.SwaggerUI.DocExpansion.None);
                 });
                 await app.InitializeDatabaseAsync();
             }
