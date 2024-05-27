@@ -9,8 +9,9 @@ using iLG.Infrastructure.Repositories.Abstractions;
 
 namespace iLG.API.Services
 {
-    public class UserInfoService(IUserInfoRepository userInfoRepository, IMapper mapper) : IUserInfoService
+    public class UserInfoService(IUserInfoRepository userInfoRepository, IUserRepository userRepository, IMapper mapper) : IUserInfoService
     {
+        private readonly IUserRepository _userRepository = userRepository;
         private readonly IUserInfoRepository _userInfoRepository = userInfoRepository;
         private readonly IMapper _mapper = mapper;
 
@@ -22,13 +23,14 @@ namespace iLG.API.Services
         public async Task<(UserInfoResponse, string)> GetUserInfo(int id)
         {   
             string message = string.Empty;
-            var userInfo = await _userInfoRepository.GetAsync(expression: ui => ui.UserId == id);
+            var user = await _userRepository.GetAsync(expression: u => u.Id == id && !u.IsLocked && !u.IsDeleted);
             var userInfoResponse = new UserInfoResponse();
 
-            if (userInfo is null)
+            if (user is null || user.UserInfo is null)
                 message = Message.Error.UserInfo.NOT_EXISTS;
             else
             {
+                var userInfo = user.UserInfo;
                 userInfoResponse = _mapper.Map<UserInfoResponse>(userInfo);
                 userInfoResponse.Relationship = userInfo.Relationship.Title;
                 userInfoResponse.Company = userInfo.Company.Title;
@@ -43,11 +45,7 @@ namespace iLG.API.Services
         /// Search suitable user
         /// </summary>
         /// <param name="userId"></param>
-        /// <param name="minAge"></param>
-        /// <param name="maxAge"></param>
-        /// <param name="gender"></param>
-        /// <param name="pageIndex"></param>
-        /// <param name="pageSize"></param>
+        /// <param name="request"></param>
         /// <returns></returns>
         public async Task<(List<UserSuitableResponse>, string)> SearchSuitableUser(int userId, UserSuitableRequest request)
         {
@@ -68,22 +66,21 @@ namespace iLG.API.Services
                 return (userSuitables, message);
             }
 
-            var userInfo = await _userInfoRepository.GetAsync(ui => ui.UserId == userId);
+            var user = await _userRepository.GetAsync(expression: u => u.Id == userId && !u.IsLocked && !u.IsDeleted);
 
-            if (userInfo is null)
-            {
-                message = Message.Error.User.NOT_EXISTS_USER;
-                return (userSuitables, message);
-            }
+            if (user is null || user.UserInfo is null)
+                return (userSuitables, Message.Error.User.NOT_EXISTS_USER);       
 
             #endregion Verify Request
 
             #region Business Logic
 
-            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => DateTime.UtcNow.Year - ui.DateOfBirth.Year >= request.MinAge && DateTime.UtcNow.Year - ui.DateOfBirth.Year <= request.MaxAge && ui.Gender == request.Gender.ToEnum<Gender>() && ui.UserId != userId);
+            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => DateTime.UtcNow.Year - ui.DateOfBirth.Year >= request.MinAge && DateTime.UtcNow.Year - ui.DateOfBirth.Year <= request.MaxAge && ui.Gender == request.Gender.ToEnum<Gender>() && ui.UserId != userId && !ui.User.IsLocked && !ui.User.IsDeleted);
 
             if (userInfos.Any())
             {
+                var userInfo = user.UserInfo;
+
                 userSuitables = userInfos.Where(ui => ui.Hobbies.Intersect(userInfo.Hobbies).Any()).Select(ui => new UserSuitableResponse
                 {
                     UserId = ui.UserId,
