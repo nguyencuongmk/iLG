@@ -22,18 +22,18 @@ namespace iLG.API.Services
         public async Task<string> SendOtpEmail(SendOtpRequest request)
         {
             if (string.IsNullOrEmpty(request?.Email))
-                return Message.Error.Account.NOT_ENOUGH_INFO;
+                return Message.Error.User.NOT_ENOUGH_INFO;
 
             if (!EmailHelper.IsValidEmail(request.Email))
-                return Message.Error.Account.INVALID_EMAIL;
+                return Message.Error.User.INVALID_EMAIL;
 
             if (await _userRepository.IsExistAsync(expression: u => u.Email == request.Email && !u.IsDeleted))
-                return Message.Error.Account.EXISTS_EMAIL;
+                return Message.Error.User.EXISTS_EMAIL;
 
             var cacheOtp = await _cache.GetStringAsync(request.Email);
 
             if (!string.IsNullOrEmpty(cacheOtp))
-                return Message.Error.Account.CACHE_OTP;
+                return Message.Error.User.CACHE_OTP;
 
             var otp = OtpHelper.GenerateOTP();
 

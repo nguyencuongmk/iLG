@@ -31,7 +31,7 @@ namespace iLG.API.Middleware
                         var response = new ApiResponse();
                         response.Errors.Add(new Error()
                         {
-                            ErrorMessage = Message.Error.Account.INVALID_AC_TOKEN
+                            ErrorMessage = Message.Error.User.INVALID_AC_TOKEN
                         });
 
                         var result = response.GetResult(StatusCodes.Status401Unauthorized);
@@ -51,7 +51,7 @@ namespace iLG.API.Middleware
                             var response = new ApiResponse();
                             response.Errors.Add(new Error()
                             {
-                                ErrorMessage = Message.Error.Account.INVALID_AC_TOKEN
+                                ErrorMessage = Message.Error.User.INVALID_AC_TOKEN
                             });
 
                             var result = response.GetResult(StatusCodes.Status401Unauthorized);

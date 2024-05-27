@@ -28,13 +28,13 @@ namespace iLG.API.Services
             #region Verify Request
 
             if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(request?.OldPassword) || string.IsNullOrEmpty(request?.NewPassword))
-                return Message.Error.Account.NOT_ENOUGH_INFO;
+                return Message.Error.User.NOT_ENOUGH_INFO;
 
             if (!EmailHelper.IsValidEmail(email))
-                return Message.Error.Account.INVALID_EMAIL;
+                return Message.Error.User.INVALID_EMAIL;
 
             if (!PasswordHelper.IsValidPassword(request.NewPassword))
-                return Message.Error.Account.INVALID_PASSWORD;
+                return Message.Error.User.INVALID_PASSWORD;
 
             #endregion Verify Request
 
@@ -51,7 +51,7 @@ namespace iLG.API.Services
             var isValidPassword = PasswordHelper.VerifyPassword(request.OldPassword, user.PasswordHash);
 
             if (!isValidPassword)
-                return Message.Error.Account.INVALID_CURRENT_PASSWORD;
+                return Message.Error.User.INVALID_CURRENT_PASSWORD;
 
             user.PasswordHash = PasswordHelper.HashPassword(request.NewPassword);
             await _userRepository.UpdateAsync(user);
@@ -71,10 +71,10 @@ namespace iLG.API.Services
             #region Verify Request
 
             if (request == null || string.IsNullOrEmpty(request.Email))
-                return (string.Empty, Message.Error.Account.NOT_ENOUGH_INFO);
+                return (string.Empty, Message.Error.User.NOT_ENOUGH_INFO);
 
             if (!EmailHelper.IsValidEmail(request.Email))
-                return (string.Empty, Message.Error.Account.INVALID_EMAIL);
+                return (string.Empty, Message.Error.User.INVALID_EMAIL);
 
             #endregion Verify Request
 
@@ -95,7 +95,7 @@ namespace iLG.API.Services
         }
 
         /// <summary>
-        /// Login user account
+        /// Sign in
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -106,13 +106,13 @@ namespace iLG.API.Services
             var response = new SigninResponse();
 
             if (string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password))
-                return (response, Message.Error.Account.NOT_ENOUGH_INFO);
+                return (response, Message.Error.User.NOT_ENOUGH_INFO);
 
             if (!EmailHelper.IsValidEmail(request.Email))
-                return (response, Message.Error.Account.INVALID_EMAIL);
+                return (response, Message.Error.User.INVALID_EMAIL);
 
             if (!PasswordHelper.IsValidPassword(request.Password))
-                return (response, Message.Error.Account.INVALID_PASSWORD);
+                return (response, Message.Error.User.INVALID_PASSWORD);
 
             #endregion Verify Request
 
@@ -126,10 +126,10 @@ namespace iLG.API.Services
             var isValidPassword = _userRepository.CheckPassword(user, request.Password);
 
             if (user == null || !isValidPassword)
-                return (response, Message.Error.Account.LOGIN_FAILED);
+                return (response, Message.Error.User.LOGIN_FAILED);
 
             if (user.IsLocked)
-                return (response, Message.Error.Account.ACCOUNT_LOCKED);
+                return (response, Message.Error.User.USER_LOCKED);
 
             var machineName = Environment.MachineName;
             var platform = PlatformHelper.GetPlatformName(Environment.OSVersion.Platform);
@@ -172,7 +172,7 @@ namespace iLG.API.Services
         }
 
         /// <summary>
-        /// Logout user account
+        /// Sign out
         /// </summary>
         /// <param name="userId"></param>
         /// <param name="token"></param>
@@ -198,7 +198,7 @@ namespace iLG.API.Services
         }
 
         /// <summary>
-        /// Register a new account
+        /// Sign up
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -207,24 +207,24 @@ namespace iLG.API.Services
             #region Verify Request
 
             if (request == null || string.IsNullOrEmpty(request?.Email) || string.IsNullOrEmpty(request?.Password) || string.IsNullOrEmpty(request?.Otp))
-                return Message.Error.Account.NOT_ENOUGH_INFO;
+                return Message.Error.User.NOT_ENOUGH_INFO;
 
             if (!EmailHelper.IsValidEmail(request.Email))
-                return Message.Error.Account.INVALID_EMAIL;
+                return Message.Error.User.INVALID_EMAIL;
 
             if (await _userRepository.IsExistAsync(expression: u => u.Email == request.Email && !u.IsDeleted))
-                return Message.Error.Account.EXISTS_EMAIL;
+                return Message.Error.User.EXISTS_EMAIL;
 
             var cacheOtp = await _cache.GetStringAsync(request.Email);
 
             if (!PasswordHelper.IsValidPassword(request.Password))
-                return Message.Error.Account.INVALID_PASSWORD;
+                return Message.Error.User.INVALID_PASSWORD;
 
             if (string.IsNullOrEmpty(cacheOtp))
-                return Message.Error.Account.EXPIRED_OTP;
+                return Message.Error.User.EXPIRED_OTP;
 
             if (request.Otp != cacheOtp)
-                return Message.Error.Account.INVALID_OTP;
+                return Message.Error.User.INVALID_OTP;
 
             #endregion Verify Request
 

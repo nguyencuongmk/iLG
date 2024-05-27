@@ -11,14 +11,14 @@ namespace iLG.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AccountController(IUserService userService, IEmailService emailService, ITokenService tokenService) : ControllerBase
+    public class UserController(IUserService userService, IEmailService emailService, ITokenService tokenService) : ControllerBase
     {
         private readonly IUserService _userService = userService;
         private readonly IEmailService _emailService = emailService;
         private readonly ITokenService _tokenService = tokenService;
 
         /// <summary>
-        /// Sign in an account
+        /// Sign in
         /// </summary-=  >
         /// <param name="request"></param>
         /// <returns></returns>
@@ -46,11 +46,11 @@ namespace iLG.API.Controllers
 
             response.Data = loginResponse.Item1;
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_IN);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.SIGNED_IN);
         }
 
         /// <summary>
-        /// Sign out an account
+        /// Sign out
         /// </summary>
         /// <returns></returns>
         [Authorize]
@@ -78,11 +78,11 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_OUT);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.SIGNED_OUT);
         }
 
         /// <summary>
-        /// Sign up a new account
+        /// Sign up
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -108,7 +108,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.SIGNED_UP);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.SIGNED_UP);
         }
 
         /// <summary>
@@ -133,7 +133,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.OTP);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.OTP);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace iLG.API.Controllers
                 return BadRequest(result);
             }
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.PW_CHANGED);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.PW_CHANGED);
         }
 
         /// <summary>
@@ -198,7 +198,7 @@ namespace iLG.API.Controllers
 
             await _emailService.SendNewPasswordEmail(request.Email, forgotPassword.Item1);
 
-            return response.GetResult(StatusCodes.Status200OK, Message.Success.Account.NEW_PASSWORD);
+            return response.GetResult(StatusCodes.Status200OK, Message.Success.User.NEW_PASSWORD);
         }
 
         /// <summary>

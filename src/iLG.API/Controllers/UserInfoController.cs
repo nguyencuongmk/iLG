@@ -26,31 +26,30 @@ namespace iLG.API.Controllers
         /// <param name="pageSize"></param>
         /// <returns></returns>
         [HttpGet("search-suitable")]
-        //public async Task<ActionResult<ApiResponse>> SearchSuitableUser(int minAge, int maxAge, string? gender, int pageIndex = 1, int pageSize = 5)
         public async Task<ActionResult<ApiResponse>> SearchSuitableUser([FromQuery] UserSuitableRequest request)
         {
             var response = new ApiResponse();
             var user = HttpContext.User;
             _ = int.TryParse(user.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
-            //var userInfos = await _userInfoService.SearchSuitableUser(userId, minAge, maxAge, gender, pageIndex, pageSize);
+            var userInfos = await _userInfoService.SearchSuitableUser(userId, request);
 
-            //if (!string.IsNullOrEmpty(userInfos.Item2))
-            //{
-            //    response.Errors.Add(new Error
-            //    {
-            //        ErrorMessage = userInfos.Item2
-            //    });
+            if (!string.IsNullOrEmpty(userInfos.Item2))
+            {
+                response.Errors.Add(new Error
+                {
+                    ErrorMessage = userInfos.Item2
+                });
 
-            //    if (userInfos.Item2 == Message.Error.Common.SERVER_ERROR)
-            //    {
-            //        return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
-            //    }
+                if (userInfos.Item2 == Message.Error.Common.SERVER_ERROR)
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError, response.GetResult(StatusCodes.Status500InternalServerError));
+                }
 
-            //    var result = response.GetResult(StatusCodes.Status400BadRequest);
-            //    return BadRequest(result);
-            //}
+                var result = response.GetResult(StatusCodes.Status400BadRequest);
+                return BadRequest(result);
+            }
 
-            //response.Data = userInfos.Item1;
+            response.Data = userInfos.Item1;
 
             return response.GetResult(StatusCodes.Status200OK);
         }

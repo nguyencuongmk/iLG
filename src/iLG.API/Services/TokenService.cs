@@ -77,7 +77,7 @@ namespace iLG.API.Services
             var refreshToken = GetRefreshTokenFromRequest(request);
 
             if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
-                return (response, Message.Error.Account.EMPTY_TOKEN);
+                return (response, Message.Error.User.EMPTY_TOKEN);
 
             if (IsAccessTokenValid(accessToken))
             {
@@ -93,7 +93,7 @@ namespace iLG.API.Services
             var userToken = await _userTokenRepository.GetAsync(ut => ut.UserId == userId && ut.Token == refreshToken && ut.ExpiredTime > DateTime.Now && ut.MachineName == machineName && ut.Platform == platform);
 
             if (userToken is null)
-                return (response, Message.Error.Account.INVALID_RF_TOKEN);
+                return (response, Message.Error.User.INVALID_RF_TOKEN);
 
             var newAccessToken = GenerateAccessToken(userToken.User);
             var newRefreshToken = GenerateRefreshToken();

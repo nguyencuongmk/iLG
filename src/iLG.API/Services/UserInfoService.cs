@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using iLG.API.Constants;
+using iLG.API.Models.Requests;
 using iLG.API.Models.Responses;
 using iLG.API.Services.Abstractions;
 using iLG.Domain.Enums;
@@ -32,6 +33,7 @@ namespace iLG.API.Services
                 userInfoResponse.Relationship = userInfo.Relationship.Title;
                 userInfoResponse.Company = userInfo.Company.Title;
                 userInfoResponse.Job = userInfo.Job.Title;
+                userInfoResponse.Height = userInfo.Height;
             }
 
             return (userInfoResponse, message);
@@ -47,20 +49,20 @@ namespace iLG.API.Services
         /// <param name="pageIndex"></param>
         /// <param name="pageSize"></param>
         /// <returns></returns>
-        public async Task<(List<UserSuitableResponse>, string)> SearchSuitableUser(int userId, int minAge, int maxAge, string gender, int pageIndex, int pageSize)
+        public async Task<(List<UserSuitableResponse>, string)> SearchSuitableUser(int userId, UserSuitableRequest request)
         {
             #region Verify Request
 
             var message = string.Empty;
             var userSuitables = new List<UserSuitableResponse>();
 
-            if (string.IsNullOrEmpty(gender))
+            if (string.IsNullOrEmpty(request.Gender))
             {
-                message = Message.Error.Account.NOT_ENOUGH_INFO;
+                message = Message.Error.User.NOT_ENOUGH_INFO;
                 return (userSuitables, message);
             }
 
-            if (pageIndex < 1 || pageSize < 0)
+            if (request.PageIndex < 1 || request.PageSize < 0)
             {
                 message = Message.Error.Paging.INVALID_PAGING;
                 return (userSuitables, message);
@@ -70,7 +72,7 @@ namespace iLG.API.Services
 
             if (userInfo is null)
             {
-                message = Message.Error.Account.NOT_EXISTS_USER;
+                message = Message.Error.User.NOT_EXISTS_USER;
                 return (userSuitables, message);
             }
 
@@ -78,24 +80,28 @@ namespace iLG.API.Services
 
             #region Business Logic
 
-            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => DateTime.UtcNow.Year - ui.DateOfBirth.Year >= minAge && DateTime.UtcNow.Year - ui.DateOfBirth.Year <= maxAge && ui.Gender == gender.ToEnum<Gender>() && ui.UserId != userId);
+            var userInfos = await _userInfoRepository.GetListAsync(expression: ui => DateTime.UtcNow.Year - ui.DateOfBirth.Year >= request.MinAge && DateTime.UtcNow.Year - ui.DateOfBirth.Year <= request.MaxAge && ui.Gender == request.Gender.ToEnum<Gender>() && ui.UserId != userId);
 
             if (userInfos.Any())
             {
                 userSuitables = userInfos.Where(ui => ui.Hobbies.Intersect(userInfo.Hobbies).Any()).Select(ui => new UserSuitableResponse
                 {
                     UserId = ui.UserId,
+                    Relationship = ui.Relationship.Title,
+                    Company = ui.Company.Title,
+                    Job = ui.Job.Title,
                     FullName = ui.FullName,
                     Age = DateTime.UtcNow.Year - ui.DateOfBirth.Year,
                     Gender = ui.Gender.ToString(),
                     Nickname = ui.Nickname,
                     PhoneNumber = ui.PhoneNumber,
+                    Height = ui.Height,
                     Zodiac = ui.Zodiac.ToString(),
                     Biography = ui.Biography,
                     Images = _mapper.Map<List<ImageResponse>>(ui.Images),
                     Hobbies = _mapper.Map<List<HobbyResponse>>(ui.Hobbies),
                     SameHobbies = ui.Hobbies.Intersect(userInfo.Hobbies).Select(x => x.Name).ToList()
-                }).Skip(pageSize * (pageIndex - 1)).Take(pageSize).ToList();
+                }).Skip(request.PageSize * (request.PageIndex - 1)).Take(request.PageSize).ToList();
             }
 
             return (userSuitables, message);
