@@ -15,5 +15,7 @@ namespace iLG.API.Services.Abstractions
         bool IsAccessTokenValid(string accessToken);
 
         Task<(TokenResponse, string)> GetNewToken(HttpRequest request);
+
+        ClaimsPrincipal? GetPrincipalFromExpiredToken(string token);
     }
 }

@@ -1,4 +1,5 @@
 ﻿using iLG.API.Handlers;
+using iLG.API.Hubs;
 using iLG.API.Maps;
 using iLG.API.Middleware;
 using iLG.API.Services;
@@ -19,6 +20,7 @@ namespace iLG.API.IoC
         public static IServiceCollection AddApiServices(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddControllers();
+            services.AddSignalR();
             services.AddEndpointsApiExplorer();
 
             // Config Swagger
@@ -158,6 +160,7 @@ namespace iLG.API.IoC
             app.UseHttpsRedirection();
             app.UseAuthentication();
             app.UseAuthorization();
+            app.MapHub<ChatHub>("/chatHub");
             app.MapControllers();
             app.UseMiddleware<TokenMiddleware>();
             app.UseMiddleware<LoggingMiddleware>();

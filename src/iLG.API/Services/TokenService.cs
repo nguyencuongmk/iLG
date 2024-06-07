@@ -156,7 +156,7 @@ namespace iLG.API.Services
 
         private string GetRefreshTokenFromRequest(HttpRequest request) => request.Headers["x-Refresh-Token"].ToString();
 
-        private ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
+        public ClaimsPrincipal? GetPrincipalFromExpiredToken(string token)
         {
             try
             {
